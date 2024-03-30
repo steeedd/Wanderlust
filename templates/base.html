@@ -14,6 +14,39 @@
 </head>
 
 <body>
+    <header>
+        <nav id = "myNavbar" class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <div class = "col-9 d-flex justify-content-start align-items-center">
+                    <a class="navbar-brand d-flex justify-content-start align-content-center" href="{{url_for('home')}}">
+                        <img id ="logo" src="{{url_for('static', filename = 'logo/logo.png')}}" alt="Logo" class="d-inline-block align-text-top">
+                    </a>
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse col-3 d-flex justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                        <a class="nav-link{%block active_home%} {%endblock%}" aria-current="page" href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {%block active_registrazione%} {%endblock%}" href="/">Registrati</a>
+                        </li>
+                        <li class="nav-item">
+                        <a class="nav-link {%block active_login%} {%endblock%}" href="/">Accedi</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {%block active_area_personale%}{%endblock%}" href="/">Area personale</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
 
 
 
