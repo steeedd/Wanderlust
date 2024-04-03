@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %} {{super()}} Index {% endblock %}
+{%block active_home%} active {%endblock%}
+{% block content %}
+
+<article id="viaggiIndex" class="carousel slide carousel-fade mb-3">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#viaggiIndex" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#viaggiIndex" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#viaggiIndex" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        <button type="button" data-bs-target="#viaggiIndex" data-bs-slide-to="3" aria-label="Slide 4"></button>
+    </div>
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="{{url_for('static', filename='indexPics/indexPic1.jpg')}}" class="d-block img-carousel">
+        <article class="carousel-caption">
+            <a href="{{url_for('home')}}" class="anchorNoTextDec"><h5 class="fs-1 fw-bold destination_text">MALDIVE</h5></a>
+        </article>
+      </div>
+      <div class="carousel-item">
+        <img src="{{url_for('static', filename='indexPics/indexPic2.jpg')}}" class="d-block img-carousel">
+        <article class="carousel-caption">
+            <a href="{{url_for('home')}}" class="anchorNoTextDec"><h5 class="fs-1 fw-bold destination_text">SEYCHELLES</h5></a>
+        </article>
+      </div>
+      <div class="carousel-item">
+        <img src="{{url_for('static', filename='indexPics/indexPic3.jpg')}}" class="d-block img-carousel">
+        <article class="carousel-caption">
+            <a href="{{url_for('home')}}" class="anchorNoTextDec"><h5 class="fs-1 fw-bold destination_text">CUBA</h5></a>
+        </article>
+      </div>
+      <div class="carousel-item">
+        <img src="{{url_for('static', filename='indexPics/indexPic4.jpg')}}" class="d-block img-carousel">
+        <article class="carousel-caption">
+            <a href="{{url_for('home')}}" class="anchorNoTextDec"><h5 class="fs-1 fw-bold destination_text">GIORDANIA</h5></a>
+        </article>
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#viaggiIndex" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#viaggiIndex" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+</article>
+
+<article id="articleHome" class="d-flex flex-column m-4">
+  <h1 id = "weOrganizeh1" class="text-center">NOI ORGANIZZIAMO, TU PARTI!</h1>
+  <p id = "weOrganizep" class="text-center fs-6">Esplora momenti memorabili, immergiti nella cultura locale e stringi legami con persone affini a te. 
+    Wanderlust ti apre le porte a un nuovo approccio per scoprire il mondo.</p>
+  <section class="d-flex justify-content-center align-items-center">
+    <a class = "anchorNoTextDec d-flex align-items-center" href="{{url_for('home')}}">
+      <p class="pLinkCenter fs-5 fw-bold pe-2">Scopri di più</p>
+      <i id = "iconArrow" class="bi bi-arrow-right"></i>
+    </a>
+  </section>
+</article>
+
+
+{% endblock %}

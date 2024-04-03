@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %} {{super()}} Area Personale {% endblock %}
+{%block active_area_personale%} active {%endblock%}
+{% block content %}
+
+<section>
+    <section class="d-flex justify-content-between">
+        <h2 class=" fw-bold display-5 fs-2 fontCopperplate mb-4">I tuoi dettagli</h2>
+        {%if current_user.tipologia == 'admin'%}
+        <form action="{{url_for('lista_utenti')}}" method="POST">
+            <button type="submit" class="btn btn-outline-success mb-4">Lista utenti</button>
+        </form>
+        {%endif%}
+    </section>
+    <article class="card row">
+      <section class="card-body col-12">
+          <div class="mb-5">
+              <img class="usrimg rounded-circle" src="{{url_for('static', filename = 'utenti/'+current_user.img_profilo)}}"
+                      alt="Questa è l'immagine dell'utente {{current_user.nome |e }}">
+          </div> 
+          <section class="row mb-3">
+              <p class="col-md-3 fs-3 fw-semibold">Nome:</p>
+              <p class="col-md-9 fst-italic fs-3">{{ current_user.nome }}</p>
+          </section>
+          <div class="py-1 border-top">
+          </div>
+          <section class="row mb-3">
+              <p class="col-md-3 fs-3 fw-semibold">Cognome:</p>
+              <p class="col-md-9 fst-italic fs-3">{{ current_user.cognome }}</p>
+          </section>
+          <div class="py-1 border-top">
+          </div>
+          <section class="row mb-3">
+              <p class="col-md-3 fs-3 fw-semibold">Email:</p>
+              <p class="col-md-9 fst-italic fs-3">{{ current_user.email }}</p>
+          </section>
+      </section>
+    </article>
+</section>
+
+{%endblock%}

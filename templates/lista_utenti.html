@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %} {{super()}} Lista utenti {% endblock %}
+{% block content %}
+<table class="table table-striped table-hover">
+    <caption>Lista degli utenti iscritti a Wanderlust ©</caption>
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nome</th>
+            <th scope="col">Cognome</th>
+            <th scope="col">Email</th>
+            <th scope="col">Tipologia</th>
+            <th scope="col" class="text-success">Promuovi</th>
+            <th scope="col" class="text-danger">Ban</th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for utente in users_list%}
+        {%if utente.tipologia != 'admin'%}
+        <tr>
+            <th scope="row">{{loop.index-1}}</th>
+            <td>{{utente.nome}}</td>
+            <td>{{utente.cognome}}</td>
+            <td>{{utente.email}}</td>
+            <td>{{utente.tipologia}}</td>
+            <td>
+                {%if utente.tipologia == 'cliente' and utente.banned == 0%}
+                <form action="{{url_for('upgradeCoordinatore', id_utente = utente.id)}}" method="POST">
+                    <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#promuoviCoordinatore{{loop.index}}">Coordinatore</button>
+                    <div class="modal fade" id="promuoviCoordinatore{{loop.index}}" tabindex="-1" aria-labelledby="promuoviCoordinatore{{loop.index}}" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1 class="modal-title fs-5 fontCopperplate" id="promuoviCoordinatore{{loop.index}}">Promozione</h1>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Stai promuovendo a coordinatore {{utente.nome}} {{utente.cognome}}.</p>
+                                <p>Vuoi procedere?</p>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                              <button type="submit" class="btn btn-success">Promuovi</button>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </form>
+                {%elif utente.banned == 1%} <i id = "dashIcon" class="bi bi-dash"></i>
+                {%elif utente.tipologia == 'coordinatore' and utente.banned==0%}<i id = "alreadyCoordinatoreIcon" class="bi bi-check"></i>{%endif%}
+            </td>
+            <td>
+                {%if utente.banned == 1%}
+                <i id ="bannedCircle" class="bi bi-x-circle"></i>
+                {%elif utente.banned == 0%}
+                <form action = "{{url_for('ban', id_utente = utente.id)}}" method="POST">
+                    <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#banUtente{{loop.index}}">Ban</button>
+                    <div class="modal fade" id="banUtente{{loop.index}}" tabindex="-1" aria-labelledby="banUtente{{loop.index}}" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1 class="modal-title fs-5 fontCopperplate" id="banUtente{{loop.index}}">Ban</h1>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Stai bannando {{utente.nome}} {{utente.cognome}}.</p>
+                                <p>Vuoi procedere?</p>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                              <button type="submit" class="btn btn-danger">Ban</button>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </form>
+                {%endif%}
+            </td>
+        </tr>
+        {%endif%}
+        {%endfor%}
+    </tbody>
+</table>
+
+
+{%endblock%}

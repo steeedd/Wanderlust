@@ -21,9 +21,12 @@ PROFILE_IMG_HEIGHT = 160
 
 
 @app.route('/', methods = ['GET', 'POST'])
-def home():
-    return render_template('base.html')
+def index():
+    return render_template('index.html')
 
+@app.route('/home', methods=['GET', 'POST'])
+def home():
+    return render_template('home.html')
 
 @app.route('/registrazione')
 def iscriviti():
@@ -68,7 +71,7 @@ def signup():
     
     verifica_email = utenti_dao.getIdUtenteByEmail(user_signup.get('email'))
     if verifica_email:
-        flash('Questa email risulta già registrata', 'warning')
+        flash('Questa email risulta già registrata!', 'warning')
         return redirect(url_for('iscriviti'))
     
     user_signup['password'] = generate_password_hash(user_signup.get('password'))
@@ -103,7 +106,7 @@ def signup():
     success = utenti_dao.inserisciUtente(user_signup)
     if success: 
         flash('Registrazione avvenuta con successo!', 'success')
-        return redirect(url_for('home'))
+        return redirect(url_for('index'))
     else:
         flash('Qualcosa è andato storto...', 'warning')
         return redirect(url_for('iscriviti'))
@@ -117,23 +120,73 @@ def login_page():
 def login():
     user_logged = request.form.to_dict()
     utente = utenti_dao.getUtenteByEmail(user_logged.get('email'))
+    if utente['banned'] == 1:
+        flash(f'Ciao {utente["nome"]}. Siamo spiacenti di informarti che il tuo account è stato bannato dal nostro sito. Questa decisione è stata presa a seguito di una violazione dei nostri Termini di Servizio o delle nostre Linee Guida della Comunità. Se credi che questo ban sia stato un errore o desideri chiarimenti sulla sua motivazione, ti preghiamo di contattare il nostro team di supporto all\'indirizzo mail info@wanderlust.com.', 'warning')
+        return redirect(url_for('index'))
+    
     if utente and check_password_hash(utente['password'], user_logged.get('password')):
         new = User(id=utente['id'], nome = utente['nome'], cognome = utente['cognome'], email = utente['email'], password = utente['password'], tipologia = utente['tipologia'], img_profilo = utente['img_profilo'])
         login_user(new)
-        return redirect(url_for('home'))
+        return redirect(url_for('index'))
 
     else:
         flash('La mail e/o la password inserita non è corretta', 'danger')
         return redirect(url_for('login_page'))
     
 
+@app.route('/profilo')
+@login_required
+def area_personale():
+    return render_template('profilo.html')
+
+@app.route('/lista_utenti', methods=['POST', 'GET'])
+@login_required
+def lista_utenti():
+    if current_user.tipologia != 'admin':
+        return render_template('405.html'), 405
+    
+    users_list = utenti_dao.getUtenti()
+    return render_template('lista_utenti.html', users_list = users_list)
+
+
+@app.route('/lista_utenti/upgradeCoordinatore/<int:id_utente>', methods=['POST'])
+@login_required
+def upgradeCoordinatore(id_utente):
+    success = utenti_dao.modificaTipologiaUtente(id_utente)
+    if success:
+        flash('L\'utente è stato promosso a coordinatore con successo!', 'success')
+    else:
+        flash('Si sono verificati degli errori nella procedura, riprova più tardi!', 'warning')
+
+    return redirect(url_for('lista_utenti'))
+
+
+@app.route('/lista_utenti/ban/<int:id_utente>', methods=['POST'])
+@login_required
+def ban(id_utente):
+    success = utenti_dao.banUtente(id_utente)
+    if success:
+        flash('L\'utente è stato bannato con successo!', 'success')
+    else:
+        flash('Si sono verificati degli errori nella procedura, riprova più tardi!', 'warning')
+
+    return redirect(url_for('lista_utenti'))
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@login_manager.unauthorized_handler
+@app.errorhandler(405)
+def unauthorized(e):
+    return render_template('405.html'), 405
+
 
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('home'))
-
+    return redirect(url_for('index'))
 
 
 @login_manager.user_loader

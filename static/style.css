@@ -1,5 +1,16 @@
 #myNavbar{
     background-color: rgb(168, 221, 168);
+    position: fixed;
+    top: 0;
+    z-index: 999;
+}
+
+#main {
+    margin-top: 10em;
+}
+
+body {
+    font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 #logo{
@@ -8,4 +19,107 @@
 
 .social_icon {
     font-size: 1.5rem;
+}
+
+.img-carousel {
+    width: 90vw;
+    height: 90vh;
+
+}
+
+.carousel-caption {
+    position: absolute;
+    bottom: 1;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    color: #fff;
+}
+
+.destination_text {
+    font-family: Apple Chancery, cursive;
+    color: #fff;
+}
+
+.destination_text:hover{
+    text-decoration: underline;
+}
+
+#spotHomepage {
+    color: #565353b8;
+    font-family: Apple Chancery, cursive;
+    margin-bottom: 0%;
+}
+
+.anchorNoTextDec{
+    text-decoration: none;
+}
+
+#articleHome {
+    background-color: rgb(168, 221, 168);
+    width: 98.5%;
+
+}
+
+#weOrganizeh1 {
+    font-family: Copperplate, Copperplate Gothic Light, fantasia;
+    color: #565353f3;
+    font-weight: bold;
+}
+
+#weOrganizep{
+    color: #565353f3;
+    font-family: Georgia, serif;
+}
+
+.pLinkCenter{
+    color: #565353f3;
+    font-family: Copperplate, Copperplate Gothic Light, fantasia;
+    margin-bottom: 0%;
+}
+
+.pLinkCenter:hover{
+    text-decoration: underline;
+}
+
+#iconArrow {
+    color: #565353f3;
+}
+
+
+#errorIcon{
+    font-size: 10rem;
+    color: red;
+}
+
+#unauthorizedIcon{
+    font-size: 10rem;
+    color: rgb(224, 224, 10);
+}
+
+#backHomeIcon{
+    font-size: 7rem;
+}
+
+.fontGeorgia{
+    font-family: Georgia, serif;
+}
+
+.fontCopperplate{
+    font-family: Copperplate, Copperplate Gothic Light, fantasia;
+}
+
+#alreadyCoordinatoreIcon{
+    font-size: 1.5em;
+    color: green;
+}
+
+#dashIcon{
+    font-size: 1.5em;
+    color: red;
+}
+
+#bannedCircle{
+    font-size: 1.5em;
+    color: red;
 }
