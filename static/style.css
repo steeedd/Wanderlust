@@ -123,3 +123,7 @@ body {
     font-size: 1.5em;
     color: red;
 }
+
+.padding_negativo_sx{
+    padding-left: 0%;
+}

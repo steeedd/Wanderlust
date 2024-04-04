@@ -6,6 +6,8 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from werkzeug.security import generate_password_hash, check_password_hash
 # pip install Pillow
 from PIL import Image
+from datetime import datetime, timedelta
+
 
 from models import User
 import utenti_dao
@@ -137,7 +139,11 @@ def login():
 @app.route('/profilo')
 @login_required
 def area_personale():
-    return render_template('profilo.html')
+    un_mese_dopo = (datetime.now() + timedelta(weeks=4)).strftime('%Y-%m-%d')
+    aeroporti_italiani = [
+    "Roma-Fiumicino - FCO", "Milano-Malpensa - MXP", "Milano-Linate - LIN", "Venezia Marco Polo - VCE", "Napoli-Capodichino - NAP", "Firenze-Peretola - FLR", "Bologna-Guglielmo Marconi - BLQ", "Catania-Fontanarossa - CTA", "Palermo-Punta Raisi - PMO", "Bergamo-Orio al Serio - BGY", "Pisa Galileo Galilei - PSA", "Verona-Villafranca - VRN", "Torino-Caselle - TRN", "Bari-Palese - BRI", "Cagliari-Elmas - CAG", "Trapani-Birgi - TPS", "Brindisi-Casale - BDS", "Genova-Cristoforo Colombo - GOA", "Perugia-Sant'Egidio - PEG", "Ancona-Falconara - AOI"
+]
+    return render_template('profilo.html', un_mese_dopo=un_mese_dopo, aeroporti_italiani=aeroporti_italiani)
 
 @app.route('/lista_utenti', methods=['POST', 'GET'])
 @login_required
