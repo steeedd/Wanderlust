@@ -127,3 +127,20 @@ body {
 .padding_negativo_sx{
     padding-left: 0%;
 }
+
+#iconNoNewRequest {
+    font-size: 3em;
+    color: green;
+    padding-right: 0.6em;
+}
+
+#textNoNewRequest {
+    font-size: 1.7em;
+    color: green;
+    margin-bottom: 0%;
+}
+
+#backAreaPersonaleIcon {
+    font-size: 3.5rem;
+    color: green
+}

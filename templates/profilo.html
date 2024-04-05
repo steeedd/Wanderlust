@@ -5,10 +5,10 @@
 
 <section class="mb-4">
     <section class="d-flex justify-content-between">
-        <h2 class=" fw-bold display-5 fs-2 fontCopperplate mb-4">I tuoi dettagli</h2>
+        <h1 class=" fw-bold display-5 fs-2 fontCopperplate mb-4">I TUOI DETTAGLI</h1>
         {%if current_user.tipologia == 'admin'%}
         <form action="{{url_for('lista_utenti')}}" method="POST">
-            <button type="submit" class="btn btn-outline-success mb-4">LISTA UTENTI</button>
+            <button type="submit" class="btn btn-outline-secondary mb-4">LISTA UTENTI</button>
         </form>
         {%endif%}
     </section>
@@ -39,7 +39,15 @@
 </section>
 
 <section class="mt-4">
-    <h2 class="fw-bold display-5 fs-2 fontCopperplate mb-1">Viaggi</h2>
+    <div class="d-flex justify-content-between mb-3">
+        <h1 class="fw-bold display-5 fs-2 fontCopperplate mb-1">VIAGGI</h1>
+        {%if current_user.tipologia == 'admin'%}
+        <form action="{{url_for('approvazione_viaggi')}}" method="POST">
+            <button type="submit" class="btn btn-outline-secondary">IN APPROVAZIONE</button>
+        </form>
+        {%endif%}
+    </div>
+    {%if current_user.tipologia == 'admin' or current_user.tipologia == 'coordinatore'%}
     <div class="d-grid gap-2 mb-4">
         <button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#modalNewTrip">+</button>
     </div>
@@ -50,23 +58,27 @@
               <h1 class="modal-title fs-5" id="modalNewTrip">Nuova proposta</h1>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="/" method="POST">
+            <form action="{{url_for('nuovo_viaggio', id_utente = current_user.id)}}" method="POST" enctype="multipart/form-data">
                 <div class="modal-body">
+                    <section class="mb-3">
+                        <label for="idTitolo" class="col-form-label">Titolo</label>
+                        <input type="text" class="form-control" name = "titolo" id="idTitolo" required minlength="3" maxlength="40">
+                    </section>
                     <section class="mb-3">
                         <label class = "col-form-label" for = "continente">Continente</label>
                         <select id="continente" name="continente" class="form-select" aria-label="Default select example" required>
                             <option selected></option>
-                            <option value="africa">Africa</option>
-                            <option value="asia">Asia</option>
-                            <option value="europa">Europa</option>
-                            <option value="oceania">Oceania</option>
-                            <option value="nord_america">Nord America</option>
-                            <option value="sud_america">Sud America</option>
+                            <option value="Africa">Africa</option>
+                            <option value="Asia">Asia</option>
+                            <option value="Europa">Europa</option>
+                            <option value="Oceania">Oceania</option>
+                            <option value="NordAmerica">Nord America</option>
+                            <option value="SudAmerica">Sud America</option>
                         </select>
                     </section>
                     <section class="mb-3">
                         <label class = "col-form-label" for = "nazione">Nazione</label>
-                        <select id="nazione" name="nazione" class="form-select" aria-label="Default select example" disabled>
+                        <select id="nazione" name="nazione" class="form-select" aria-label="Default select example" disabled required>
                             <option value="">Seleziona prima un continente</option>
                         </select>
                     </section>
@@ -78,9 +90,9 @@
                     <section class="d-flex justify-content-between">
                         <section>
                             <label class = "col-form-label" for = "num_giorni">Numero di giorni</label>
-                            <select id="num_giorni" name="num_giorni" class="form-select" aria-label="Default select example" required>
+                            <select id="num_giorni" name="num_giorni" class="form-select" aria-label="Default select example" required min="5" max="21">
                                 <option selected></option>
-                                {%for i in range(1,13)%}
+                                {%for i in range(5,22)%}
                                 <option value="{{i}}">{{i}}</option>
                                 {%endfor%}
                             </select>
@@ -96,11 +108,19 @@
                         </section>
                     </section>
                     <label class = "d-block mt-3 mb-2" for = "idPrezzo">Prezzo</label>
-                    <article class="input-group">
+                    <article class="input-group mb-3">
                       <span class="input-group-text">€</span>
-                      <input type="number" id = "idPrezzo" name = "prezzo" class="form-control" aria-label="Amount (to the nearest dollar)" required min="0">
+                      <input type="number" id = "idPrezzo" name = "prezzo" class="form-control" aria-label="Amount (to the nearest dollar)" required min="0" max="9999">
                       <span class="input-group-text">.00</span>
                     </article>
+                    <section class="mb-3">
+                        <label for="formFile" class="form-label">Aggiungi un'immagine</label>
+                        <input class="form-control" type="file" id="formFile" name="immagine" required>
+                    </section>
+                    <div class="mb-1">
+                        <label for="idDescrizione" class="form-label">Descrizione</label>
+                        <textarea class="form-control" id="idDescrizione" rows="2" name="descrizione" required minlength="100"></textarea>
+                    </div>
                 </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
@@ -110,7 +130,8 @@
           </div>
         </div>
     </div>
-    {%if current_user.tipologia == 'admin' or current_user.tipologia == 'coordinatore'%}
+
+    
     <section>
         <h3 class="fw-bold display-5 fs-4 fontCopperplate mb-4">Le tue proposte</h3>
     </section>

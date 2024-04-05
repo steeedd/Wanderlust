@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %} {{super()}} Approvazione Viaggi {% endblock %}
+{% block content %}
+<h1 class=" fw-bold display-5 fs-2 fontCopperplate mb-4">PROPOSTE IN APPROVAZIONE</h1>
+<section class="fs-6 display-6 alert alert-info mb-4" role="alert">
+    In questa sezione, troverai tutte le proposte di viaggio elaborate dai tuoi coordinatori. Avrai l'opportunità di valutarle: se decidi di approvarle, diventeranno ufficiali e verranno visualizzate nella Homepage; altrimenti, resteranno visibili solo in questa sezione, accessibili esclusivamente da te.
+</section>
+{%if viaggi_in_approvazione%}
+<section class="d-flex flex-wrap">
+    {%for viaggio in viaggi_in_approvazione%}
+    <article class="me-3">
+        <img src="{{url_for('static', filename = 'viaggio/'+viaggio.img_viaggio)}}" alt="Questa è l'immagine del viaggio in {{viaggio.nazione}}">
+    </article>
+    {%endfor%}
+</section>
+{%else%}
+<section class = "d-flex justify-content-between align-items-center">
+    <section class="d-flex justify-content-start align-items-center">
+        <i id = "iconNoNewRequest" class="bi bi-check-circle-fill"></i>
+        <p id="textNoNewRequest">Al momento non risultano nuove proposte che richiedono un'approvazione!</p>
+    </section>
+    <a href="{{ url_for('area_personale') }}"><i id = "backAreaPersonaleIcon" class="bi bi-house-door"></i></a> 
+</section>
+
+{%endif%}
+{%endblock%}
