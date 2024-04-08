@@ -5,8 +5,12 @@
     z-index: 999;
 }
 
+.mt-9{
+    margin-top: 9em;
+}
+
 #main {
-    margin-top: 10em;
+    margin-top: 3em;
 }
 
 body {
@@ -143,4 +147,76 @@ body {
 #backAreaPersonaleIcon {
     font-size: 3.5rem;
     color: green
+}
+
+.image-container {
+    position: relative;
+    display: inline-block;
+}
+
+.zoomable {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    transition: transform 0.3s ease-in-out;
+}
+
+.image-container:hover .zoomable {
+    transform: scale(1.05);
+    filter: brightness(85%) blur(1px)
+}
+
+.titleImgPos {
+    color: #fff;
+    font-size:1.4em;
+    font-weight: bold;
+    position: absolute;
+    bottom: 2em;
+    left: 0.8em;
+    z-index: 998;
+}
+
+.sectionDaysImgPos{
+    color: #fff;
+    font-size:1.2em;
+    font-weight: 400;
+    position: absolute;
+    bottom: 0.5em;
+    left: 0.8em;
+    z-index: 998;
+}
+
+.pMarginNegativo{
+    margin-bottom: 0%;
+}
+
+.priceImgPos{
+    color: #fff;
+    font-size:1.3em;
+    font-weight: bold;
+    position: absolute;
+    bottom: 0.5em;
+    right: 0.8em;
+    z-index: 998;
+}
+
+.fav-button {
+    position: absolute;
+    top: 0.5em;
+    right: 0.5em;
+    z-index: 998;
+}
+
+#sectionHome{
+    background-image: url("indexPics/foto_di_gruppo.jpg");
+    background-size: cover;
+    height: 17em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#idh1Home{
+    font-size: 5em;
+    height: min-content;
 }

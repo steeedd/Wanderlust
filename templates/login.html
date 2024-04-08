@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %} {{super()}} Accedi {% endblock %}
 {%block active_login%} active {%endblock%}
+
 {% block content %}
 <article class="col-4 bg-light p-4 border rounded">
     <form action="{{url_for('login')}}" method="POST">

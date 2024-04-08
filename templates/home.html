@@ -1,6 +1,37 @@
 {% extends "base.html" %}
 {% block title %} {{super()}} Home {% endblock %}
 {%block active_home%} active {%endblock%}
+
+{%block img_fullscreen%}
+<section id="sectionHome">
+    <h1 id = "idh1Home" class="fw-bold fontCopperplate text-white">Esplora, Sogna, Viaggia.</h1>
+</section>
+{%endblock%}
 {% block content %}
+<section class="d-flex flex-wrap">
+    {%for viaggio in viaggi_approvati%}
+    <article class="me-4 ms-3 mb-4 image-container">
+        <img class="zoomable rounded" src="{{url_for('static', filename = 'viaggio/'+viaggio.img_viaggio)}}" alt="Questa è l'immagine del viaggio in {{viaggio.nazione}}">
+        <div class="fav-button text-white d-flex justify-content-start fs-5">
+            {%if viaggio.continente == 'Africa' or viaggio.continente=='Europa'%}
+            <i class="bi bi-globe-europe-africa me-1"></i>
+            {%elif viaggio.continente == 'NordAmerica' or viaggio.continente == 'SudAmerica'%}
+            <i class="bi bi-globe-americas me-1"></i>
+            {%elif viaggio.continente == 'Asia'%}
+            <i class="bi bi-globe-central-south-asia me-1"></i>
+            {%else%}
+            <i class="bi bi-globe-asia-australia me-1"></i>
+            {%endif%}
+            <p class="fontCopperplate fw-semibold">{{viaggio.nazione}}</p>
+        </div>
+        <p class="titleImgPos">{{viaggio.titolo}}</p>
+        <section class="d-flex justify-content-start align-items-center sectionDaysImgPos">
+            <i class="bi bi-calendar-date me-2"></i>
+            <p class="pMarginNegativo">{{viaggio.num_giorni}} giorni</p>
+        </section>
+        <p class="priceImgPos pMarginNegativo">{{viaggio.prezzo}} €</p>
+    </article>
+    {%endfor%}
+</section>
 
 {%endblock%}

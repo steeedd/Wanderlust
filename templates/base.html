@@ -53,6 +53,11 @@
         </nav>
     </header>
 
+    <div class="container-fluid mt-9">
+        {%block img_fullscreen%}
+        {%endblock%}
+    </div>
+
     <div id = "main" class="container">
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}

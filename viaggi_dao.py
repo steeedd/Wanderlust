@@ -53,6 +53,37 @@ def getViaggiInApprovazione():
     connection.close()
     return result 
 
+def changeApprovazioneViaggio(id_viaggio):
+    success = False
+    query = 'UPDATE viaggi SET approvato = ? WHERE id = ?'
+    connection = sqlite3.connect('db/wanderlust.db')
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+    try:
+        cursor.execute(query, (1,id_viaggio))
+        connection.commit()
+        success = True
+
+    except Exception as e:
+        print('Error: ' + str(e))
+        connection.rollback()
+
+    cursor.close
+    connection.close
+
+    return success
+
+def getIdCoordinatoreViaggio(id_viaggio):
+    query = 'SELECT id_coordinatore FROM viaggi WHERE id = ?'
+    connection = sqlite3.connect('db/wanderlust.db')
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+    cursor.execute(query, (id_viaggio,))
+    result = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    return result 
+
 def inserisciPartecipazioneViaggio(id_utente, id_viaggio):
     success = False
     query = 'INSERT INTO partecipazioni_viaggi (id_viaggio, id_utente) VALUES (?,?)'
@@ -72,3 +103,37 @@ def inserisciPartecipazioneViaggio(id_utente, id_viaggio):
     connection.close
 
     return success
+
+
+def getViaggiCoordinatore(id_coordinatore):
+    query = 'SELECT * FROM viaggi WHERE id_coordinatore = ?'
+    connection = sqlite3.connect('db/wanderlust.db')
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+    cursor.execute(query, (id_coordinatore,))
+    result = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return result 
+
+def getViaggiCoordinatoreFiltro(id_coordinatore, filtro):
+    query = 'SELECT * FROM viaggi WHERE id_coordinatore = ? AND approvato = ?'
+    connection = sqlite3.connect('db/wanderlust.db')
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+    cursor.execute(query, (id_coordinatore,filtro))
+    result = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return result 
+
+def getViaggiApprovati():
+    query = 'SELECT * FROM viaggi WHERE approvato = ?'
+    connection = sqlite3.connect('db/wanderlust.db')
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+    cursor.execute(query, (1,))
+    result = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return result 

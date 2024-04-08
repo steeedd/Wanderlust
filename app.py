@@ -29,7 +29,10 @@ def index():
 
 @app.route('/home', methods=['GET', 'POST'])
 def home():
-    return render_template('home.html')
+    viaggi_approvati = viaggi_dao.getViaggiApprovati()
+    oggi = datetime.now().strftime('%Y-%m-%d')
+
+    return render_template('home.html', viaggi_approvati=viaggi_approvati, oggi=oggi)
 
 @app.route('/registrazione')
 def iscriviti():
@@ -123,11 +126,13 @@ def login_page():
 def login():
     user_logged = request.form.to_dict()
     utente = utenti_dao.getUtenteByEmail(user_logged.get('email'))
+
     if utente['banned'] == 1:
         flash(f'Ciao {utente["nome"]}. Siamo spiacenti di informarti che il tuo account è stato bannato dal nostro sito. Questa decisione è stata presa a seguito di una violazione dei nostri Termini di Servizio o delle nostre Linee Guida della Comunità. Se credi che questo ban sia stato un errore o desideri chiarimenti sulla sua motivazione, ti preghiamo di contattare il nostro team di supporto all\'indirizzo mail info@wanderlust.com.', 'warning')
         return redirect(url_for('index'))
     
     if utente and check_password_hash(utente['password'], user_logged.get('password')):
+        flash('Login effettuato con successo!', 'success')
         new = User(id=utente['id'], nome = utente['nome'], cognome = utente['cognome'], email = utente['email'], password = utente['password'], tipologia = utente['tipologia'], img_profilo = utente['img_profilo'])
         login_user(new)
         return redirect(url_for('index'))
@@ -137,14 +142,22 @@ def login():
         return redirect(url_for('login_page'))
     
 
-@app.route('/profilo')
+@app.route('/profilo', methods = ['POST', 'GET'])
 @login_required
 def area_personale():
     un_mese_dopo = (datetime.now() + timedelta(weeks=4)).strftime('%Y-%m-%d')
     aeroporti_italiani = [
     "Roma-Fiumicino - FCO", "Milano-Malpensa - MXP", "Milano-Linate - LIN", "Venezia Marco Polo - VCE", "Napoli-Capodichino - NAP", "Firenze-Peretola - FLR", "Bologna-Guglielmo Marconi - BLQ", "Catania-Fontanarossa - CTA", "Palermo-Punta Raisi - PMO", "Bergamo-Orio al Serio - BGY", "Pisa Galileo Galilei - PSA", "Verona-Villafranca - VRN", "Torino-Caselle - TRN", "Bari-Palese - BRI", "Cagliari-Elmas - CAG", "Trapani-Birgi - TPS", "Brindisi-Casale - BDS", "Genova-Cristoforo Colombo - GOA", "Perugia-Sant'Egidio - PEG", "Ancona-Falconara - AOI"
 ]
-    return render_template('profilo.html', un_mese_dopo=un_mese_dopo, aeroporti_italiani=aeroporti_italiani)
+    filtroApprovazione = request.form.get('filtroApprovazione', 'all')
+    if filtroApprovazione == 'all':
+        viaggi_coordinatore = viaggi_dao.getViaggiCoordinatore(current_user.id)
+    else:
+        filtro = int(filtroApprovazione)
+        viaggi_coordinatore = viaggi_dao.getViaggiCoordinatoreFiltro(current_user.id, filtro)
+
+
+    return render_template('profilo.html', un_mese_dopo=un_mese_dopo, aeroporti_italiani=aeroporti_italiani, viaggi_coordinatore = viaggi_coordinatore, filtroApprovazione=filtroApprovazione)
 
 @app.route('/<int:id_utente>/nuovo_viaggio', methods=['POST'])
 @login_required
@@ -321,6 +334,26 @@ def approvazione_viaggi():
     viaggi_in_approvazione = viaggi_dao.getViaggiInApprovazione()
     
     return render_template('approvazione_viaggi.html', viaggi_in_approvazione = viaggi_in_approvazione)
+
+
+@app.route('/approvazione_viaggi/approvazione/<int:id_viaggio>', methods = ['POST'])
+@login_required
+def changeApprovazione(id_viaggio):
+    if current_user.tipologia != 'admin':
+        return render_template('405.html'), 405
+    
+    id_coordinatore = viaggi_dao.getIdCoordinatoreViaggio(id_viaggio)['id_coordinatore']
+
+    success = viaggi_dao.changeApprovazioneViaggio(id_viaggio)
+    success2 = viaggi_dao.inserisciPartecipazioneViaggio(id_coordinatore, id_viaggio)
+
+    if success and success2:
+        flash('Il viaggio è stato approvato con successo! Ora tutti gli utenti del sito potranno visualizzarlo nella homepage e avranno la possibilità di parteciparvi!', 'success')
+        return redirect(url_for('approvazione_viaggi'))
+    else:
+        flash('Si sono verificati degli errori nell\'approvazione del viaggio...', 'warning')
+        return redirect(url_for('approvazione_viaggi'))
+
 
 @app.errorhandler(404)
 def page_not_found(e):
