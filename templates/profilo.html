@@ -56,14 +56,14 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 class="modal-title fs-5" id="modalNewTrip">Nuova proposta</h1>
+              <h1 class="modal-title fs-5 fontCopperplate" id="modalNewTrip">Nuova proposta</h1>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="{{url_for('nuovo_viaggio', id_utente = current_user.id)}}" method="POST" enctype="multipart/form-data">
                 <div class="modal-body">
                     <section class="mb-3">
                         <label for="idTitolo" class="col-form-label">Titolo</label>
-                        <input type="text" class="form-control" name = "titolo" id="idTitolo" required minlength="3" maxlength="40">
+                        <input type="text" class="form-control" name = "titolo" id="idTitolo" required minlength="3" maxlength="70">
                     </section>
                     <section class="mb-3">
                         <label class = "col-form-label" for = "continente">Continente</label>
@@ -124,8 +124,8 @@
                     </div>
                 </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-              <button type="submit" class="btn btn-success">Conferma</button>
+              <button type="button" class="btn btn-secondary fontCopperplate" data-bs-dismiss="modal">Annulla</button>
+              <button type="submit" class="btn btn-success fontCopperplate">Conferma</button>
             </div>
             </form>
           </div>
@@ -154,7 +154,7 @@
         </div>
         {%for viaggio in viaggi_coordinatore%}
         <article class="me-4 ms-2 mb-4 image-container">
-            <img class="zoomable rounded" src="{{url_for('static', filename = 'viaggio/'+viaggio.img_viaggio)}}" alt="Questa è l'immagine del viaggio in {{viaggio.nazione}}">
+            <a href="{{url_for('pagina_viaggio', id_viaggio = viaggio.id)}}"><img class="zoomable rounded" src="{{url_for('static', filename = 'viaggio/'+viaggio.img_viaggio)}}" alt="Questa è l'immagine del viaggio in {{viaggio.nazione}}"></a>
             <p class="titleImgPos">{{viaggio.titolo}}</p>
             <section class="d-flex justify-content-start align-items-center sectionDaysImgPos">
                 <i class="bi bi-calendar-date me-2"></i>

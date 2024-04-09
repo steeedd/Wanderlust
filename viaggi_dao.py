@@ -31,6 +31,29 @@ def getIdViaggio(viaggio):
     connection.close()
     return result  
 
+def getViaggio(id_viaggio):
+    query = 'SELECT * FROM viaggi WHERE id_viaggio = ?'
+    connection = sqlite3.connect('db/wanderlust.db')
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+    cursor.execute(query, (id_viaggio,))
+    result = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    return result
+
+def getViaggioAndPartecipazioni(id_viaggio):
+    query = 'SELECT *, COUNT(partecipazioni_viaggi.id_utente) AS partecipanti FROM viaggi, utenti, partecipazioni_viaggi WHERE viaggi.id = ? AND utenti.id = viaggi.id_coordinatore AND viaggi.id = partecipazioni_viaggi.id_viaggio GROUP BY viaggi.id '
+    connection = sqlite3.connect('db/wanderlust.db')
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+    cursor.execute(query, (id_viaggio,))
+    result = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    return result
+
+
 def getViaggioEsistente(nazione, data):
     query = 'SELECT * FROM viaggi WHERE nazione = ? AND data = ? AND approvato = ?'
     connection = sqlite3.connect('db/wanderlust.db')

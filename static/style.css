@@ -220,3 +220,8 @@ body {
     font-size: 5em;
     height: min-content;
 }
+
+#descriptionSection{
+    max-height: 390px;
+    overflow-y: auto;
+}

@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # pip install Pillow
 from PIL import Image
 from datetime import datetime, timedelta
-
+import os
 
 from models import User
 import utenti_dao, viaggi_dao
@@ -159,6 +159,15 @@ def area_personale():
 
     return render_template('profilo.html', un_mese_dopo=un_mese_dopo, aeroporti_italiani=aeroporti_italiani, viaggi_coordinatore = viaggi_coordinatore, filtroApprovazione=filtroApprovazione)
 
+@app.route('/viaggio/<int:id_viaggio>')
+def pagina_viaggio(id_viaggio):
+    viaggio = viaggi_dao.getViaggioAndPartecipazioni(id_viaggio)
+    aeroporti_italiani = [
+    "Roma-Fiumicino - FCO", "Milano-Malpensa - MXP", "Milano-Linate - LIN", "Venezia Marco Polo - VCE", "Napoli-Capodichino - NAP", "Firenze-Peretola - FLR", "Bologna-Guglielmo Marconi - BLQ", "Catania-Fontanarossa - CTA", "Palermo-Punta Raisi - PMO", "Bergamo-Orio al Serio - BGY", "Pisa Galileo Galilei - PSA", "Verona-Villafranca - VRN", "Torino-Caselle - TRN", "Bari-Palese - BRI", "Cagliari-Elmas - CAG", "Trapani-Birgi - TPS", "Brindisi-Casale - BDS", "Genova-Cristoforo Colombo - GOA", "Perugia-Sant'Egidio - PEG", "Ancona-Falconara - AOI"
+]
+
+    return render_template('viaggio.html', viaggio = viaggio, aeroporti_italiani=aeroporti_italiani)
+
 @app.route('/<int:id_utente>/nuovo_viaggio', methods=['POST'])
 @login_required
 def nuovo_viaggio(id_utente):
@@ -217,7 +226,7 @@ def nuovo_viaggio(id_utente):
     if len(descrizione) < 100:
         flash('La descrizione deve essere formata da un minimo di 100 caratteri', 'danger')
         return redirect(url_for('area_personale'))
-    if len(titolo) < 3 or len(titolo) > 40:
+    if len(titolo) < 3 or len(titolo) > 70:
         flash('Il requisito sulla lunghezza del titolo non è rispettato. Deve avere un numero di caratteri compreso fra 3 e 40!', 'danger')
         return redirect(url_for('area_personale'))
     
@@ -279,9 +288,9 @@ def nuovo_viaggio(id_utente):
         flash('Si sono verificati degli errori nell\'inserimento dell\'annuncio del viaggio, riprova tra qualche minuto!', 'danger')
         return redirect (url_for('area_personale'))
     else:
+        id_viaggio = viaggi_dao.getIdViaggio(nuovo_viaggio)['id']
+        successPartecipazione = viaggi_dao.inserisciPartecipazioneViaggio(current_user.id, id_viaggio)
         if current_user.tipologia == 'admin':
-            id_viaggio = viaggi_dao.getIdViaggio(nuovo_viaggio)['id']
-            successPartecipazione = viaggi_dao.inserisciPartecipazioneViaggio(current_user.id, id_viaggio)
             if not successPartecipazione:
                 flash('Qualcosa è andato storto...', 'warning')
                 return redirect(url_for('area_personale'))
@@ -289,8 +298,135 @@ def nuovo_viaggio(id_utente):
                 flash('L\'annuncio del viaggio è stato inserito con successo! Ora potrai visualizzarlo nella homepage del sito!', 'success')
                 return redirect (url_for('area_personale'))
         else:
-            flash('L\'inserimento dell\'annuncio del viaggio è andato a buon fine! Ora dovrà essere approvato dall\'amministratore prima di essere pubblicato nella homepage del sito!', 'success')
-            return redirect (url_for('area_personale'))
+            if not successPartecipazione:
+                flash('Qualcosa è andato storto...', 'warning')
+                return redirect(url_for('area_personale'))
+            else:
+                flash('L\'inserimento dell\'annuncio del viaggio è andato a buon fine! Ora dovrà essere approvato dall\'amministratore prima di essere pubblicato nella homepage del sito!', 'success')
+                return redirect (url_for('area_personale'))
+            
+
+@app.route('/viaggio/<int:id_viaggio>/modifica_viaggio', methods=['POST'])
+@login_required
+def modifica_viaggio(id_viaggio):
+    viaggio_esistente = viaggi_dao.getViaggio(id_viaggio)
+
+    if viaggio_esistente['id_coordinatore'] != current_user.id:
+        return render_template('405.html'), 405
+    
+    if current_user.tipologia == 'cliente':
+        return render_template('405.html'), 405
+    
+    viaggio = request.form.to_dict()
+    data = viaggio.get('data')
+    num_giorni = int(viaggio.get('num_giorni'))
+    aeroporto = viaggio.get('aeroporto')
+    prezzo = int(viaggio.get('prezzo'))
+    descrizione = viaggio.get('descrizione')
+    titolo = viaggio.get('titolo')
+
+
+    if data == "":
+        flash('Devi compilare tutti i campi!', 'danger')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    if num_giorni == "":
+        flash('Devi compilare tutti i campi!', 'danger')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    if aeroporto == "":
+        flash('Devi compilare tutti i campi!', 'danger')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    if prezzo == "":
+        flash('Devi compilare tutti i campi!', 'danger')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    if descrizione == "":
+        flash('Devi compilare tutti i campi!', 'danger')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    if titolo == "":
+        flash('Devi compilare tutti i campi!', 'danger')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    
+    if num_giorni < 5 or num_giorni > 21:
+        flash('Devi inserire un numero di giorni valido!', 'danger')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    if prezzo < 0:
+        flash('Non puoi inserire un prezzo negativo per il viaggio!', 'danger')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    if ('.' or ',') in str(prezzo):
+        flash('Puoi inserire solamente prezzi mensili interi!', 'warning')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    if len(descrizione) < 100:
+        flash('La descrizione deve essere formata da un minimo di 100 caratteri', 'danger')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    if len(titolo) < 3 or len(titolo) > 70:
+        flash('Il requisito sulla lunghezza del titolo non è rispettato. Deve avere un numero di caratteri compreso fra 3 e 40!', 'danger')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    
+    
+    # Se esiste già un viaggio approvato per la stessa destinazione, nella stessa data in cui il coordinatore sta provando a inserire il suo viaggio, automaticamente non potrà andare avanti con la richiesta!
+    viaggioEsistente = viaggi_dao.getViaggioEsistente(viaggio_esistente['nazione'], data)
+    if viaggioEsistente:
+        flash(f'Esiste già un viaggio approvato in data {data} per la nazione {viaggio_esistente['nazione']}! Riprova in un altro giorno.', 'warning')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    
+    nuovo_viaggio = {
+        'data': data,
+        'num_giorni': num_giorni,
+        'aeroporto': aeroporto,
+        'prezzo': prezzo,
+        'descrizione': descrizione,
+        'titolo': titolo
+    }
+
+    secondi = datetime.now().timestamp()
+
+    img_viaggio = request.files.get('immagine')
+    if img_viaggio:
+        os.rem
+        img = Image.open(img_viaggio)
+
+        width, height = img.size
+        new_width = JOURNEY_IMG_HEIGHT * width / height
+
+        size = new_width, JOURNEY_IMG_HEIGHT
+        img.thumbnail(size, Image.Resampling.LANCZOS)
+
+        left = (new_width/2 - JOURNEY_IMG_HEIGHT/2)
+        top = 0
+        right = (new_width/2 + JOURNEY_IMG_HEIGHT/2)
+        bottom = JOURNEY_IMG_HEIGHT
+
+        img = img.crop((left, top, right, bottom))
+
+        ext = img_viaggio.filename.split('.')[-1]
+
+        img.save('static/viaggio/' + '@Viaggio' + '.' + str(current_user.id) + '.' + str(secondi) + '.' + ext)
+
+        img_viaggio = '@Viaggio' + '.' + str(current_user.id) + '.' + str(secondi) + '.' + ext
+        nuovo_viaggio['img_viaggio'] = img_viaggio
+
+    success = viaggi_dao.inserisciViaggio(nuovo_viaggio)
+    if not success:
+        flash('Si sono verificati degli errori nell\'inserimento dell\'annuncio del viaggio, riprova tra qualche minuto!', 'danger')
+        return redirect (url_for('area_personale'))
+    else:
+        id_viaggio = viaggi_dao.getIdViaggio(nuovo_viaggio)['id']
+        successPartecipazione = viaggi_dao.inserisciPartecipazioneViaggio(current_user.id, id_viaggio)
+        if current_user.tipologia == 'admin':
+            if not successPartecipazione:
+                flash('Qualcosa è andato storto...', 'warning')
+                return redirect(url_for('area_personale'))
+            else:
+                flash('L\'annuncio del viaggio è stato inserito con successo! Ora potrai visualizzarlo nella homepage del sito!', 'success')
+                return redirect (url_for('area_personale'))
+        else:
+            if not successPartecipazione:
+                flash('Qualcosa è andato storto...', 'warning')
+                return redirect(url_for('area_personale'))
+            else:
+                flash('L\'inserimento dell\'annuncio del viaggio è andato a buon fine! Ora dovrà essere approvato dall\'amministratore prima di essere pubblicato nella homepage del sito!', 'success')
+                return redirect (url_for('area_personale'))
+
+    return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
 
 @app.route('/lista_utenti', methods=['POST', 'GET'])
 @login_required
@@ -342,12 +478,9 @@ def changeApprovazione(id_viaggio):
     if current_user.tipologia != 'admin':
         return render_template('405.html'), 405
     
-    id_coordinatore = viaggi_dao.getIdCoordinatoreViaggio(id_viaggio)['id_coordinatore']
-
     success = viaggi_dao.changeApprovazioneViaggio(id_viaggio)
-    success2 = viaggi_dao.inserisciPartecipazioneViaggio(id_coordinatore, id_viaggio)
 
-    if success and success2:
+    if success:
         flash('Il viaggio è stato approvato con successo! Ora tutti gli utenti del sito potranno visualizzarlo nella homepage e avranno la possibilità di parteciparvi!', 'success')
         return redirect(url_for('approvazione_viaggi'))
     else:

@@ -10,7 +10,7 @@
 <section class="d-flex flex-wrap">
     {%for viaggio in viaggi_in_approvazione%}
     <article class="me-4 ms-3 mb-4 image-container">
-        <img class="zoomable rounded" src="{{url_for('static', filename = 'viaggio/'+viaggio.img_viaggio)}}" alt="Questa è l'immagine del viaggio in {{viaggio.nazione}}">
+        <a href="{{url_for('pagina_viaggio', id_viaggio = viaggio.id)}}"><img class="zoomable rounded" src="{{url_for('static', filename = 'viaggio/'+viaggio.img_viaggio)}}" alt="Questa è l'immagine del viaggio in {{viaggio.nazione}}"></a>
         <p class="titleImgPos">{{viaggio.titolo}}</p>
         <section class="d-flex justify-content-start align-items-center sectionDaysImgPos">
             <i class="bi bi-calendar-date me-2"></i>

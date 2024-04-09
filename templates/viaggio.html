@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block title %} {{super()}}Viaggio{% endblock %}
+
+
+{% block content %}
+<h1 class="fontCopperplate fs-1 fw-bold mb-1">{{viaggio.titolo}}</h1>
+<article class="d-flex flex-wrap border p-2">
+    <section class="col-5 d-flex flex-column">
+        <section class="d-flex justify-content-between me-3 py-2 border-bottom align-items-center">
+            <div class="d-flex justify-content-start align-items-center fs-5">
+                {%if viaggio.continente == 'Africa' or viaggio.continente=='Europa'%}
+                <i class="bi bi-globe-europe-africa me-2"></i>
+                {%elif viaggio.continente == 'NordAmerica' or viaggio.continente == 'SudAmerica'%}
+                <i class="bi bi-globe-americas me-2"></i>
+                {%elif viaggio.continente == 'Asia'%}
+                <i class="bi bi-globe-central-south-asia me-2"></i>
+                {%else%}
+                <i class="bi bi-globe-asia-australia me-2"></i>
+                {%endif%}
+                <p class="fontCopperplate pMarginNegativo">Dove?</p>
+            </div>
+            <p class="pMarginNegativo fs-5">{{viaggio.nazione}}</p>
+        </section>
+        <section class="d-flex justify-content-between me-3 py-2 border-bottom align-items-center">
+            <div class="d-flex justify-content-start fs-5">
+                <i class="bi bi-calendar-event me-2"></i>
+                <p class="fontCopperplate pMarginNegativo">Partenza:</p>
+            </div>
+            <p class="pMarginNegativo fs-5">{{viaggio.data}}</p>
+        </section>
+
+        <section class="d-flex justify-content-between me-3 py-2 border-bottom align-items-center">
+            <div class="d-flex justify-content-start fs-5">
+                <i class="bi bi-airplane me-2"></i>
+                <p class="fontCopperplate pMarginNegativo">Aeroporto di partenza:</p>
+            </div>
+            <p class="pMarginNegativo fs-5">{{viaggio.aeroporto}}</p>
+        </section>
+        <section class="d-flex justify-content-between me-3 py-2 border-bottom align-items-center">
+            <div class="d-flex justify-content-start fs-5 align-items-center">
+                <i class="bi bi-clock me-2"></i>
+                <p class="fontCopperplate pMarginNegativo">Durata del viaggio:</p>
+            </div>
+            <p class="pMarginNegativo fs-5">{{viaggio.num_giorni}} giorni</p>
+        </section>
+        <section class="d-flex justify-content-between me-3 py-2 border-bottom align-items-center">
+            <div class="d-flex justify-content-start fs-5">
+                <i class="bi bi-cash-coin me-2"></i>
+                <p class="fontCopperplate pMarginNegativo">Prezzo:</p>
+            </div>
+            <p class="pMarginNegativo fs-5">{{viaggio.prezzo}}€</p>
+        </section>
+        <section class="d-flex justify-content-between me-3 py-2 border-bottom align-items-center">
+            <div class="d-flex justify-content-start fs-5">
+                <i class="bi bi-person-check me-2"></i>
+                <p class="fontCopperplate pMarginNegativo">Coordinatore:</p>
+            </div>
+            <p class="pMarginNegativo fs-5">{{viaggio.nome}} {{viaggio.cognome}}</p>
+        </section>
+        <section class="d-flex justify-content-between me-3 py-2 border-bottom align-items-center">
+            <div class="d-flex justify-content-start fs-5">
+                <i class="bi bi-people me-2"></i>
+                <p class="fontCopperplate pMarginNegativo">Numero di partecipanti:</p>
+            </div>
+            <p class="pMarginNegativo fs-5">{{viaggio.partecipanti}}</p>
+        </section>
+        <section class="d-flex justify-content-end mt-3">
+            {%if current_user.id == viaggio.id_coordinatore%}
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-outline-secondary btn-sm me-3 fontCopperplate" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Modifica annuncio
+            </button>
+            <!-- Modal -->
+            <form action="{{url_for('modifica_viaggio', id_viaggio = viaggio.id)}}", method="POST", enctype="multipart/form-data">
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h1 class="modal-title fs-5 fontCopperplate" id="exampleModalLabel">Modifica annuncio</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <section class="mb-3">
+                                    <label for="idTitolo" class="col-form-label">Titolo</label>
+                                    <input type="text" class="form-control" name = "titolo" id="idTitolo" value="{{viaggio.titolo}}" minlength="3" maxlength="70">
+                                </section>
+                                <section class="mb-3">
+                                    <label class = "col-form-label" for = "continente">Continente</label>
+                                    <select id="continente" name="continente" class="form-select" aria-label="Default select example" required disabled>
+                                        <option value="{{viaggio.continente}}">{{viaggio.continente}}</option>
+                                    </select>
+                                </section>
+                                <section class="mb-3">
+                                    <label class = "col-form-label" for = "nazione">Nazione</label>
+                                    <select id="nazione" name="nazione" class="form-select" aria-label="Default select example" disabled required>
+                                        <option value="{{viaggio.nazione}}">{{viaggio.nazione}}</option>
+                                    </select>
+                                </section>
+                                <section class="mb-3">
+                                    <label for = "date" class = "col-form-label">Data di partenza</label>
+                                    <input name = 'data' value = "{{viaggio.data}}"class="form-control" type="date" aria-label="default input example" id = "date" min="{{viaggio.data}}" required>
+                                    <div id="passwordHelp" class="form-text">Puoi solamente posticipare il viaggio, ma non anticiparlo!</div>
+                                </section>
+                                <section class="d-flex justify-content-between">
+                                    <section>
+                                        <label class = "col-form-label" for = "num_giorni">Numero di giorni</label>
+                                        <select id="num_giorni" name="num_giorni" class="form-select" aria-label="Default select example" required min="5" max="21">
+                                            <option selected value="{{viaggio.num_giorni}}">{{viaggio.num_giorni}}</option>
+                                            {%for i in range(5,22)%}
+                                            {%if i|int != viaggio.num_giorni|int%}
+                                            <option value="{{i}}">{{i}}</option>
+                                            {%endif%}
+                                            {%endfor%}
+                                        </select>
+                                    </section>
+                                    <section>
+                                        <label class = "col-form-label" for = "idAeroporto">Aeroporto di partenza</label>
+                                        <select id="idAeroporto" name="aeroporto" class="form-select" aria-label="Default select example" required>
+                                            <option value="{{viaggio.aeroporto}}" selected>{{viaggio.aeroporto}}</option>
+                                            {%for aeroporto in aeroporti_italiani%}
+                                            {%if aeroporto != viaggio.aeroporto%}
+                                            <option value="{{aeroporto}}">{{aeroporto}}</option>
+                                            {%endif%}
+                                            {%endfor%}
+                                        </select>
+                                    </section>
+                                </section>
+                                <label class = "d-block mt-3 mb-2" for = "idPrezzo">Prezzo</label>
+                                <article class="input-group mb-3">
+                                  <span class="input-group-text">€</span>
+                                  <input type="number" id = "idPrezzo" name = "prezzo" value="{{viaggio.prezzo}}" class="form-control" aria-label="Amount (to the nearest dollar)" required min="0" max="9999">
+                                  <span class="input-group-text">.00</span>
+                                </article>
+                                <div class="mb-1">
+                                    <label for="idDescrizione" class="form-label">Descrizione</label>
+                                    <textarea class="form-control" id="idDescrizione" rows="3" name="descrizione" required minlength="100">{{viaggio.descrizione}}</textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary fontCopperplate" data-bs-dismiss="modal">Annulla</button>
+                            <button type="submit" class="btn btn-success fontCopperplate">Modifica</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            {%endif%}
+        </section>
+
+    </section>
+    <section class="col-4 d-flex justify-content-center">
+        <img class="zoomable rounded" src="{{url_for('static', filename = 'viaggio/'+viaggio.img_viaggio)}}" alt="Questa è l'immagine del viaggio in {{viaggio.nazione}}">
+    </section>
+    <section id = "descriptionSection" class="col-3 d-flex flex-column align-items-center">
+        <p class="fs-6">{{viaggio.descrizione}}</p>
+    </section>
+</article>
+
+<section class = "d-flex justify-content-end align-items-center mt-3">
+    <a class="d-flex justify-content-start anchorNoTextDec fs-3 text-success" href="{{ url_for('home') }}">
+        <i class="bi bi-house-heart me-2"></i>
+        <p class="fontCopperplate pMarginNegativo">Continua l'esplorazione</p>
+    </a> 
+</section>
+
+{%endblock%}

@@ -11,7 +11,7 @@
 <section class="d-flex flex-wrap">
     {%for viaggio in viaggi_approvati%}
     <article class="me-4 ms-3 mb-4 image-container">
-        <img class="zoomable rounded" src="{{url_for('static', filename = 'viaggio/'+viaggio.img_viaggio)}}" alt="Questa è l'immagine del viaggio in {{viaggio.nazione}}">
+        <a href="{{url_for('pagina_viaggio', id_viaggio = viaggio.id)}}"><img class="zoomable rounded" src="{{url_for('static', filename = 'viaggio/'+viaggio.img_viaggio)}}" alt="Questa è l'immagine del viaggio in {{viaggio.nazione}}"></a>
         <div class="fav-button text-white d-flex justify-content-start fs-5">
             {%if viaggio.continente == 'Africa' or viaggio.continente=='Europa'%}
             <i class="bi bi-globe-europe-africa me-1"></i>
