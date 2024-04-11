@@ -363,10 +363,12 @@ def modifica_viaggio(id_viaggio):
     
     
     # Se esiste già un viaggio approvato per la stessa destinazione, nella stessa data in cui il coordinatore sta provando a inserire il suo viaggio, automaticamente non potrà andare avanti con la richiesta!
-    viaggioEsistente = viaggi_dao.getViaggioEsistente(viaggio_esistente['nazione'], data)
-    if viaggioEsistente:
-        flash(f'Esiste già un viaggio approvato in data {data} per la nazione {viaggio_esistente['nazione']}! Riprova in un altro giorno.', 'warning')
-        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    if data != viaggio_esistente['data']:
+        nazione = viaggio_esistente['nazione']
+        viaggioStessaDataENazione = viaggi_dao.getViaggioEsistente(nazione, data)
+        if viaggioStessaDataENazione:
+            flash(f'Esiste già un viaggio approvato in data {data} per la nazione {nazione}! Riprova in un altro giorno.', 'warning')
+            return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
     
     nuovo_viaggio = {
         'data': data,
@@ -377,11 +379,9 @@ def modifica_viaggio(id_viaggio):
         'titolo': titolo
     }
 
-    secondi = datetime.now().timestamp()
-
-    img_viaggio = request.files.get('immagine')
+    img_viaggio = request.files.get('img_viaggio')
     if img_viaggio:
-        os.rem
+        os.remove('static/viaggio/'+viaggio_esistente['img_viaggio'])
         img = Image.open(img_viaggio)
 
         width, height = img.size
@@ -398,35 +398,39 @@ def modifica_viaggio(id_viaggio):
         img = img.crop((left, top, right, bottom))
 
         ext = img_viaggio.filename.split('.')[-1]
+        secondi = datetime.now().timestamp()
 
         img.save('static/viaggio/' + '@Viaggio' + '.' + str(current_user.id) + '.' + str(secondi) + '.' + ext)
 
         img_viaggio = '@Viaggio' + '.' + str(current_user.id) + '.' + str(secondi) + '.' + ext
-        nuovo_viaggio['img_viaggio'] = img_viaggio
 
-    success = viaggi_dao.inserisciViaggio(nuovo_viaggio)
-    if not success:
-        flash('Si sono verificati degli errori nell\'inserimento dell\'annuncio del viaggio, riprova tra qualche minuto!', 'danger')
-        return redirect (url_for('area_personale'))
+        successFoto = viaggi_dao.modificaImmagineViaggio(img_viaggio, id_viaggio)
     else:
-        id_viaggio = viaggi_dao.getIdViaggio(nuovo_viaggio)['id']
-        successPartecipazione = viaggi_dao.inserisciPartecipazioneViaggio(current_user.id, id_viaggio)
-        if current_user.tipologia == 'admin':
-            if not successPartecipazione:
-                flash('Qualcosa è andato storto...', 'warning')
-                return redirect(url_for('area_personale'))
-            else:
-                flash('L\'annuncio del viaggio è stato inserito con successo! Ora potrai visualizzarlo nella homepage del sito!', 'success')
-                return redirect (url_for('area_personale'))
-        else:
-            if not successPartecipazione:
-                flash('Qualcosa è andato storto...', 'warning')
-                return redirect(url_for('area_personale'))
-            else:
-                flash('L\'inserimento dell\'annuncio del viaggio è andato a buon fine! Ora dovrà essere approvato dall\'amministratore prima di essere pubblicato nella homepage del sito!', 'success')
-                return redirect (url_for('area_personale'))
+        successFoto = True
 
-    return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    successInfo = viaggi_dao.modificaInformazioniViaggio(nuovo_viaggio, id_viaggio)
+
+    if successFoto and successInfo:
+        flash('L\'annuncio del viaggio è stato modificato con successo!', 'success')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    else:
+        flash('Si sono verificati degli errori nella modifica dell\'annuncio...', 'warning')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+
+
+@app.route('/viaggio/<int:id_viaggio>/lista_partecipanti', methods = ['POST', 'GET'])
+@login_required
+def lista_partecipanti(id_viaggio):
+    viaggio = viaggi_dao.getViaggio(id_viaggio)
+
+    if viaggio['id_coordinatore'] != current_user.id:
+        return render_template('405.html'), 405
+
+    partecipazioni = viaggi_dao.getPartecipazioniViaggio(id_viaggio)
+
+    return render_template("lista_partecipanti.html", partecipazioni = partecipazioni, viaggio = viaggio)
+
+
 
 @app.route('/lista_utenti', methods=['POST', 'GET'])
 @login_required

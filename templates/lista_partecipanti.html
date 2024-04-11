@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %} {{super()}} Lista partecipanti {% endblock %}
+
+{% block content %}
+
+<h1 class = "fw-bold display-5 fs-2 fontCopperplate mb-4 padding_negativo_sx">LISTA PARTECIPANTI</h1>
+<table class="table table-striped table-hover">
+  <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Nome</th>
+        <th scope="col">Cognome</th>
+        <th scope="col">Email</th>
+        <th scope="col">Tipologia</th>
+        <th scope="col">Nota</th>
+      </tr>
+  </thead>
+  <tbody>
+    {%for partecipazione in partecipazioni%}
+    <tr class="{%if partecipazione.id_utente == viaggio.id_coordinatore%}text-success{%endif%}">
+        <th scope="row">{{loop.index}}</th>
+        <td>{{partecipazione.nome}}</td>
+        <td>{{partecipazione.cognome}}</td>
+        <td>{{partecipazione.email}}</td>
+        <td>{{partecipazione.tipologia}}</td>
+        {%if partecipazione.nota%}
+        <td>{{partecipazione.nota}}</td>
+        {%else%}
+        <td class="text-secondary">L'utente non ha lasciato alcuna nota.</td>
+        {%endif%}
+    </tr>
+    {%endfor%}
+  </tbody>
+</table>
+
+{%endblock%}

@@ -32,7 +32,7 @@ def getIdViaggio(viaggio):
     return result  
 
 def getViaggio(id_viaggio):
-    query = 'SELECT * FROM viaggi WHERE id_viaggio = ?'
+    query = 'SELECT * FROM viaggi WHERE id = ?'
     connection = sqlite3.connect('db/wanderlust.db')
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
@@ -156,6 +156,60 @@ def getViaggiApprovati():
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
     cursor.execute(query, (1,))
+    result = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return result 
+
+
+def modificaImmagineViaggio(img_viaggio, id_viaggio):
+    success = False
+    query = 'UPDATE viaggi SET img_viaggio = ? WHERE id = ?'
+    connection = sqlite3.connect('db/wanderlust.db')
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+    try:
+        cursor.execute(query, (img_viaggio, id_viaggio))
+        connection.commit()
+        success = True
+
+    except Exception as e:
+        print('Error: ' + str(e))
+        connection.rollback()
+
+    cursor.close
+    connection.close
+
+    return success
+
+
+def modificaInformazioniViaggio(nuovo_viaggio, id_viaggio):
+    success = False
+    query = 'UPDATE viaggi SET titolo = ?, data = ?, num_giorni = ?, aeroporto = ?, prezzo = ?, descrizione = ? WHERE id = ?'
+    connection = sqlite3.connect('db/wanderlust.db')
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+    try:
+        cursor.execute(query, (nuovo_viaggio.get('titolo'), nuovo_viaggio.get('data'), nuovo_viaggio.get('num_giorni'), nuovo_viaggio.get('aeroporto'), nuovo_viaggio.get('prezzo'), nuovo_viaggio.get('descrizione'), id_viaggio))
+        connection.commit()
+        success = True
+
+    except Exception as e:
+        print('Error: ' + str(e))
+        connection.rollback()
+
+    cursor.close
+    connection.close
+
+    return success
+
+
+def getPartecipazioniViaggio(id_viaggio):
+    query = 'SELECT * FROM partecipazioni_viaggi, utenti WHERE partecipazioni_viaggi.id_utente = utenti.id AND partecipazioni_viaggi.id_viaggio = ?'
+    connection = sqlite3.connect('db/wanderlust.db')
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+    cursor.execute(query, (id_viaggio,))
     result = cursor.fetchall()
     cursor.close()
     connection.close()
