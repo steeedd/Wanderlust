@@ -225,3 +225,28 @@ body {
     max-height: 390px;
     overflow-y: auto;
 }
+
+
+.img_profilo_list{
+    width: 3.5em;
+}
+
+.paymentMethodCreditCard{
+    font-size: 5em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+.paymentMethodPaypal{
+    color: rgb(5, 5, 126);
+    font-size: 5em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+.paymentMethodSatispay{
+    color: rgb(241, 79, 79);
+    font-size: 5em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}

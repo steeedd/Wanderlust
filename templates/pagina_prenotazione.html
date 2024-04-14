@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %} {{super()}}Pagina Prenotazione{% endblock %}
+
+
+{% block content %}
+<div class="alert alert-info" role="alert">
+    Hei {{utente.nome}}! Sei pronta per questa nuova avventura? Il {{viaggio.data}} si avvicina, assicurati il posto prenotando il prima possibile!
+</div>
+<h1 class="fw-bold display-5 fs-2 fontCopperplate mb-4">Procedi con il pagamento</h1>
+<div class="d-flex justify-content-center align-items-center">
+    <article>
+        <i class="bi bi-credit-card paymentMethodCreditCard" data-bs-toggle="collapse" data-bs-target="#collapseCreditCard" id="creditCardIcon"></i>
+        <i class="bi bi-paypal paymentMethodPaypal" data-bs-toggle="collapse" data-bs-target="#collapsePaypal" id="paypalIcon"></i>
+        <i class="bi bi-stripe paymentMethodSatispay" data-bs-toggle="collapse" data-bs-target="#collapseSatispay" id="satispayIcon"></i>
+
+        <section class="collapse border mt-3 py-3" id="collapseCreditCard">
+            <h5 class="fontCopperplate fs-5 mx-3 border-bottom">Inserisci i dati della carta</h5>
+            <form>
+                <section class="m-3">
+                    <label for="cardNumber" class="form-label">Numero della carta</label>
+                    <input type="text" placeholder="0000 1234 5678 9999" class="form-control" name="cardNumber" id="cardNumber" required>
+                </section>
+                <section class="mb-3 mx-3 d-flex justify-content-between">
+                    <article class="d-flex justify-content-start">
+                        <section class="me-2">
+                            <label class = "col-form-label" for = "meseScadenzaCarta">Mese</label>
+                            <select id="meseScadenzaCarta" name="meseScadenzaCarta" class="form-select" aria-label="Default select example" required>
+                                <option selected></option>
+                                {%for i in range (1,10)%}
+                                <option value="{{i}}">0{{i}}</option>
+                                {%endfor%}
+                                {%for i in range(10,13)%}
+                                <option value="{{i}}">{{i}}</option>
+                                {%endfor%}
+                            </select> 
+                        </section>
+                        <section>
+                            <label class = "col-form-label" for = "annoScadenzaCarta">Anno</label>
+                            <select id="annoScadenzaCarta" name="annoScadenzaCarta" class="form-select" aria-label="Default select example" required>
+                                <option selected></option>
+                                {%for i in range (2024,2061)%}
+                                <option value="{{i}}">{{i}}</option>
+                                {%endfor%}
+                            </select> 
+                        </section>
+                    </article>
+                    <article>
+                        <label for="CVV" class="form-label">CVV</label>
+                        <input type="text" placeholder="123" class="form-control" name="CVV" id="CVV" required>
+                    </article>
+                </section>
+
+                <section class="mb-3 mx-3">
+                    <label for="nomeSullaCartaText" class="form-label">Nome sulla carta</label>
+                    <input type="text" class="form-control" name="nomeSullaCartaText" id="nomeSullaCartaText" required>
+                </section>
+
+                <article class="d-flex justify-content-between mx-3 align-items-center">
+                    <section class="d-flex justify-content-start align-items-center">
+                        <p class="fontCopperplate me-2 pMarginNegativo">TOTALE:</p>
+                        <p class="fontCopperplate pMarginNegativo">{{viaggio.prezzo}}€</p>
+                    </section>
+                    <button type = "submit" class="btn btn-sm btn-outline-primary">Conferma</button>
+                </article>
+            </form>
+        </section>
+
+        <section class="collapse border mt-3" id="collapsePaypal">
+            <p>paypal</p>
+        </section>
+
+        <section class="collapse border mt-3" id="collapseSatispay">
+            <p>satispay</p>
+        </section>
+    </article>
+</div>
+
+
+{%endblock%}
+
+{%block js%}
+<script src="{{url_for('static', filename='pagamento.js')}}" type="text/javascript"></script>
+{%endblock%}

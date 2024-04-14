@@ -490,6 +490,19 @@ def changeApprovazione(id_viaggio):
     else:
         flash('Si sono verificati degli errori nell\'approvazione del viaggio...', 'warning')
         return redirect(url_for('approvazione_viaggi'))
+    
+@app.route('/pagina_prenotazione/<int:id_viaggio>/<int:id_utente>', methods = ['POST', 'GET'])
+@login_required
+def pagina_prenotazione(id_viaggio, id_utente):
+    if current_user.id != id_utente:
+        return render_template('405.html'), 405
+    
+    viaggio = viaggi_dao.getViaggio(id_viaggio)
+    utente = utenti_dao.getUtenteByID(id_utente)
+
+    return render_template('pagina_prenotazione.html', viaggio = viaggio, utente = utente)
+
+
 
 
 @app.errorhandler(404)

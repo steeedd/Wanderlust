@@ -17,16 +17,20 @@
   </thead>
   <tbody>
     {%for partecipazione in partecipazioni%}
-    <tr class="{%if partecipazione.id_utente == viaggio.id_coordinatore%}text-success{%endif%}">
-        <th scope="row">{{loop.index}}</th>
-        <td>{{partecipazione.nome}}</td>
-        <td>{{partecipazione.cognome}}</td>
-        <td>{{partecipazione.email}}</td>
-        <td>{{partecipazione.tipologia}}</td>
-        {%if partecipazione.nota%}
-        <td>{{partecipazione.nota}}</td>
+    <tr>
+        <td><img class = "img_profilo_list rounded-circle" src = "{{url_for('static', filename = 'utenti/'+partecipazione.img_profilo)}}"></td>
+        <td class="align-content-center">{{partecipazione.nome}}</td>
+        <td class="align-content-center">{{partecipazione.cognome}}</td>
+        <td class="align-content-center">{{partecipazione.email}}</td>
+        {%if partecipazione.id_utente != viaggio.id_coordinatore%}
+        <td class="align-content-center">{{partecipazione.tipologia}}</td>
         {%else%}
-        <td class="text-secondary">L'utente non ha lasciato alcuna nota.</td>
+        <td class="align-content-center">organizzatore</td>
+        {%endif%}
+        {%if partecipazione.nota%}
+        <td class="align-content-center">{{partecipazione.nota}}</td>
+        {%else%}
+        <td class="text-secondary align-content-center">L'utente non ha lasciato alcuna nota.</td>
         {%endif%}
     </tr>
     {%endfor%}
