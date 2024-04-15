@@ -15,7 +15,8 @@
 
         <section class="collapse border mt-3 py-3" id="collapseCreditCard">
             <h5 class="fontCopperplate fs-5 mx-3 border-bottom">Inserisci i dati della carta</h5>
-            <form>
+            <form method="POST" action="{{url_for('pagamento', id_viaggio = viaggio.id, id_utente = utente.id)}}">
+                <input type="hidden" name="method" value="creditcard">
                 <section class="m-3">
                     <label for="cardNumber" class="form-label">Numero della carta</label>
                     <input type="text" placeholder="0000 1234 5678 9999" class="form-control" name="cardNumber" id="cardNumber" required>
@@ -60,13 +61,34 @@
                         <p class="fontCopperplate me-2 pMarginNegativo fs-5">TOTALE:</p>
                         <p class="fontCopperplate pMarginNegativo fs-5">{{viaggio.prezzo}}€</p>
                     </section>
-                    <button type = "submit" class="btn btn-sm btn-outline-primary">Conferma</button>
+                    <button type = "button" class="btn btn-sm btn-outline-primary fontCopperplate" data-bs-toggle="modal" data-bs-target="#paymentCreditCardModal">Conferma</button>
                 </article>
+                <div class="modal fade" id="paymentCreditCardModal" tabindex="-1" aria-labelledby="paymentCreditCardModal" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5 fontCopperplate" id="paymentCreditCardModal">Prenotazione viaggio</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-1">
+                                    <label for="nota" class="form-label">Puoi lasciare una nota per il nostro coordinatore</label>
+                                    <textarea class="form-control" id="nota" rows="3" name="nota"></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary fontCopperplate" data-bs-dismiss="modal">Annulla</button>
+                            <button type="submit" class="btn btn-success fontCopperplate">Conferma pagamento</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </form>
         </section>
 
         <section class="collapse border mt-3 py-3" id="collapsePaypal">
-            <form>
+            <form action="{{url_for('pagamento', id_viaggio = viaggio.id, id_utente = utente.id)}}", method="POST">
+                <input type="hidden" name="method" value="paypal">
                 <h5 class="fontCopperplate fs-5 mx-3 border-bottom">Inserisci i tuoi dati Paypal</h5>
                 <div class="d-flex justify-content-center align-items-center mt-3 mb-1">
                     <i class="bi bi-paypal paymentMethodPaypalLower"></i>
@@ -86,13 +108,34 @@
                         <p class="fontCopperplate me-2 pMarginNegativo fs-5">TOTALE:</p>
                         <p class="fontCopperplate pMarginNegativo fs-5">{{viaggio.prezzo}}€</p>
                     </section>
-                    <button type = "submit" class="btn btn-sm btn-outline-primary">Conferma</button>
+                    <button type = "button" class="btn btn-sm btn-outline-primary fontCopperplate" data-bs-toggle="modal" data-bs-target="#paymentPaypalModal">Conferma</button>
                 </article>
+                <div class="modal fade" id="paymentPaypalModal" tabindex="-1" aria-labelledby="paymentPaypalModal" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5 fontCopperplate" id="paymentPaypalModal">Prenotazione viaggio</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-1">
+                                <label for="nota" class="form-label">Puoi lasciare una nota per il nostro coordinatore</label>
+                                <textarea class="form-control" id="nota" rows="3" name="nota"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary fontCopperplate" data-bs-dismiss="modal">Annulla</button>
+                          <button type="submit" class="btn btn-success fontCopperplate">Conferma pagamento</button>
+                        </div>
+                      </div>
+                    </div>
+                </div>
             </form>
         </section>
 
         <section class="collapse border mt-3 py-3" id="collapseSatispay">
-            <form>
+            <form action="{{url_for('pagamento', id_viaggio = viaggio.id, id_utente = utente.id)}}", method="POST">
+                <input type="hidden" name="method" value="satispay">
                 <h5 class="fontCopperplate fs-5 mx-3 border-bottom">Inserisci il tuo numero di telefono</h5>
                 <div class="d-flex justify-content-center align-items-center mt-3 mb-1">
                     <i class="bi bi-stripe paymentMethodSatispayLower"></i>
@@ -118,12 +161,29 @@
                         <p class="fontCopperplate me-2 pMarginNegativo fs-5">TOTALE:</p>
                         <p class="fontCopperplate pMarginNegativo fs-5">{{viaggio.prezzo}}€</p>
                     </section>
-                    <button type = "submit" class="btn btn-sm btn-outline-primary">Conferma</button>
+                    <button type = "button" class="btn btn-sm btn-outline-primary fontCopperplate" data-bs-toggle="modal" data-bs-target="#paymentSatispayModal">Conferma</button>
                 </article>
+                <div class="modal fade" id="paymentSatispayModal" tabindex="-1" aria-labelledby="paymentSatispayModal" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5 fontCopperplate" id="paymentSatispayModal">Prenotazione viaggio</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-1">
+                                    <label for="nota" class="form-label">Puoi lasciare una nota per il nostro coordinatore</label>
+                                    <textarea class="form-control" id="nota" rows="3" name="nota"></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary fontCopperplate" data-bs-dismiss="modal">Annulla</button>
+                            <button type="submit" class="btn btn-success fontCopperplate">Conferma pagamento</button>
+                            </div>
+                            </div>
+                    </div>
+                </div>
             </form>
-
-            
-
         </section>
     </article>
 </div>

@@ -20,6 +20,7 @@ icons.forEach(iconCollapse => {
 });
         
 
+
 const cardNumberInput = document.getElementById('cardNumber');
 
 cardNumberInput.addEventListener('input', function() {
@@ -32,6 +33,7 @@ cardNumberInput.addEventListener('input', function() {
         this.setCustomValidity('');
     }
 });
+
 
 
 const cvvInput = document.getElementById('CVV');

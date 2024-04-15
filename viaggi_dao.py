@@ -127,6 +127,26 @@ def inserisciPartecipazioneViaggio(id_utente, id_viaggio):
 
     return success
 
+def inserisciPartecipazioneViaggioConNota(id_utente, id_viaggio, nota):
+    success = False
+    query = 'INSERT INTO partecipazioni_viaggi (id_viaggio, id_utente, nota) VALUES (?,?,?)'
+    connection = sqlite3.connect('db/wanderlust.db')
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+    try:
+        cursor.execute(query, (id_viaggio, id_utente, nota))
+        connection.commit()
+        success = True
+
+    except Exception as e:
+        print('Error: ' + str(e))
+        connection.rollback()
+
+    cursor.close
+    connection.close
+
+    return success
+
 
 def getViaggiCoordinatore(id_coordinatore):
     query = 'SELECT * FROM viaggi WHERE id_coordinatore = ?'
@@ -206,6 +226,18 @@ def modificaInformazioniViaggio(nuovo_viaggio, id_viaggio):
 
 def getPartecipazioniViaggio(id_viaggio):
     query = 'SELECT * FROM partecipazioni_viaggi, utenti WHERE partecipazioni_viaggi.id_utente = utenti.id AND partecipazioni_viaggi.id_viaggio = ?'
+    connection = sqlite3.connect('db/wanderlust.db')
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+    cursor.execute(query, (id_viaggio,))
+    result = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return result 
+
+
+def getUtentiPartecipantiAlViaggio(id_viaggio):
+    query = 'SELECT id_utente FROM partecipazioni_viaggi WHERE id_viaggio = ?'
     connection = sqlite3.connect('db/wanderlust.db')
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()

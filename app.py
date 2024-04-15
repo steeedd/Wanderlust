@@ -165,8 +165,14 @@ def pagina_viaggio(id_viaggio):
     aeroporti_italiani = [
     "Roma-Fiumicino - FCO", "Milano-Malpensa - MXP", "Milano-Linate - LIN", "Venezia Marco Polo - VCE", "Napoli-Capodichino - NAP", "Firenze-Peretola - FLR", "Bologna-Guglielmo Marconi - BLQ", "Catania-Fontanarossa - CTA", "Palermo-Punta Raisi - PMO", "Bergamo-Orio al Serio - BGY", "Pisa Galileo Galilei - PSA", "Verona-Villafranca - VRN", "Torino-Caselle - TRN", "Bari-Palese - BRI", "Cagliari-Elmas - CAG", "Trapani-Birgi - TPS", "Brindisi-Casale - BDS", "Genova-Cristoforo Colombo - GOA", "Perugia-Sant'Egidio - PEG", "Ancona-Falconara - AOI"
 ]
+    lista_id_utenti_partecipanti = viaggi_dao.getUtentiPartecipantiAlViaggio(id_viaggio)
+    lista_id_result = []
+    for id in lista_id_utenti_partecipanti:
+        lista_id_result.append(id['id_utente'])
 
-    return render_template('viaggio.html', viaggio = viaggio, aeroporti_italiani=aeroporti_italiani)
+    oggi = datetime.today().strftime('%Y-%m-%d')
+
+    return render_template('viaggio.html', viaggio = viaggio, aeroporti_italiani=aeroporti_italiani, lista_id_partecipanti = lista_id_result, oggi=oggi)
 
 @app.route('/<int:id_utente>/nuovo_viaggio', methods=['POST'])
 @login_required
@@ -465,6 +471,7 @@ def ban(id_utente):
 
     return redirect(url_for('lista_utenti'))
 
+
 @app.route('/approvazione_viaggi', methods=['GET', 'POST'])
 @login_required
 def approvazione_viaggi():
@@ -492,7 +499,7 @@ def changeApprovazione(id_viaggio):
         return redirect(url_for('approvazione_viaggi'))
     
 
-@app.route('/pagina_prenotazione/<int:id_viaggio>/<int:id_utente>', methods = ['POST', 'GET'])
+@app.route('/pagina_prenotazione/<int:id_viaggio>/<int:id_utente>', methods = ['POST'])
 @login_required
 def pagina_prenotazione(id_viaggio, id_utente):
     if current_user.id != id_utente:
@@ -506,6 +513,59 @@ def pagina_prenotazione(id_viaggio, id_utente):
     return render_template('pagina_prenotazione.html', viaggio = viaggio, utente = utente, paesi_prefissi = paesi_prefissi)
 
 
+@app.route('/pagamento/<int:id_viaggio>/<int:id_utente>', methods = ['POST'])
+@login_required
+def pagamento(id_viaggio, id_utente):
+    payment_method = request.form.get('method')
+    if payment_method == 'creditcard':
+        numeroCarta = request.form.get('cardNumber')
+        meseScadenzaCarta = request.form.get('meseScadenzaCarta')
+        annoScadenzaCarta = request.form.get('annoScadenzaCarta')
+        cvv = request.form.get('CVV')
+        nomeSullaCartaText = request.form.get('nomeSullaCartaText')
+
+        if numeroCarta == "":
+            flash('Il numero della carta inserito non è valido', 'warning')
+            return redirect(url_for('pagina_prenotazione', id_viaggio = id_viaggio, id_utente = id_utente))
+        if meseScadenzaCarta=="" or annoScadenzaCarta == "":
+            flash('La data di scadenza della carta inserita non è valida', 'warning')
+            return redirect(url_for('pagina_prenotazione', id_viaggio = id_viaggio, id_utente = id_utente))
+        if cvv == "" or len(cvv) != 3:
+            flash('Il CVV inserito non è valido', 'warning')
+            return redirect(url_for('pagina_prenotazione', id_viaggio = id_viaggio, id_utente = id_utente))
+        if nomeSullaCartaText == "":
+            flash('Il nome inserito non è valido', 'warning')
+            return redirect(url_for('pagina_prenotazione', id_viaggio = id_viaggio, id_utente = id_utente))
+
+    elif payment_method == 'paypal':
+        emailPaypal = request.form.get('emailPaypal')
+        passwordPaypal = request.form.get('passwordPaypal')
+        if emailPaypal == "" or passwordPaypal == "":
+            flash('Le credenziali di Paypal inserite non sono corrette', 'warning')
+            return redirect(url_for('pagina_prenotazione', id_viaggio = id_viaggio, id_utente = id_utente))
+
+    elif payment_method == 'satispay':
+        numTelefonoSati = request.form.get('numTelefonoSati')
+        if numTelefonoSati == "":
+            flash('Il numero di telefono inserito non è valido', 'warning')
+            return redirect(url_for('pagina_prenotazione', id_viaggio = id_viaggio, id_utente = id_utente))
+        if len(numTelefonoSati) < 9 or len(numTelefonoSati) > 14:
+            flash('Il numero di telefono inserito non è valido', 'warning')
+            return redirect(url_for('pagina_prenotazione', id_viaggio = id_viaggio, id_utente = id_utente))
+    else:
+        flash('Il metodo di pagamento utilizzato non è valido!', 'warning')
+        return redirect(url_for('pagina_prenotazione', id_viaggio = id_viaggio, id_utente = id_utente))
+    
+    nota = request.form.get('nota')
+
+    success = viaggi_dao.inserisciPartecipazioneViaggioConNota(id_utente, id_viaggio, nota)
+    if success:
+        flash('Il pagamento è andato a buon fine! Ora potrai visualizzare il viaggio nella tua area personale... prepara le valigie!', 'success')
+        return redirect(url_for('index'))
+    else:
+        flash('Si sono verificati degli errori e il pagamento non è andato a buon fine, riprova più tardi!', 'warning')
+        return redirect(url_for('pagina_prenotazione', id_viaggio = id_viaggio, id_utente = id_utente))
+    
 
 
 @app.errorhandler(404)
