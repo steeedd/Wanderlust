@@ -491,16 +491,19 @@ def changeApprovazione(id_viaggio):
         flash('Si sono verificati degli errori nell\'approvazione del viaggio...', 'warning')
         return redirect(url_for('approvazione_viaggi'))
     
+
 @app.route('/pagina_prenotazione/<int:id_viaggio>/<int:id_utente>', methods = ['POST', 'GET'])
 @login_required
 def pagina_prenotazione(id_viaggio, id_utente):
     if current_user.id != id_utente:
         return render_template('405.html'), 405
     
+    paesi_prefissi = {"Stati Uniti": "+1", "Cina": "+86", "Giappone": "+81", "Germania": "+49", "Regno Unito": "+44", "India": "+91", "Francia": "+33", "Brasile": "+55", "Canada": "+1", "Russia": "+7", "Corea del Sud": "+82", "Australia": "+61", "Spagna": "+34", "Messico": "+52", "Indonesia": "+62", "Turchia": "+90", "Arabia Saudita": "+966", "Svizzera": "+41", "Argentina": "+54", "Paesi Bassi": "+31", "Svezia": "+46", "Polonia": "+48", "Belgio": "+32", "Norvegia": "+47", "Austria": "+43", "Iran": "+98", "Sudafrica": "+27", "Filippine": "+63", "Malaysia": "+60", "Thailandia": "+66", "Egitto": "+20", "Colombia": "+57", "Vietnam": "+84", "Emirati Arabi Uniti": "+971", "Pakistan": "+92", "Bangladesh": "+880", "Nigeria": "+234", "Romania": "+40", "Chile": "+56", "Portogallo": "+351", "Israele": "+972", "Czechia": "+420", "Grecia": "+30", "Hong Kong": "+852", "Ungheria": "+36", "Singapore": "+65", "Danimarca": "+45"}
+    
     viaggio = viaggi_dao.getViaggio(id_viaggio)
     utente = utenti_dao.getUtenteByID(id_utente)
 
-    return render_template('pagina_prenotazione.html', viaggio = viaggio, utente = utente)
+    return render_template('pagina_prenotazione.html', viaggio = viaggio, utente = utente, paesi_prefissi = paesi_prefissi)
 
 
 

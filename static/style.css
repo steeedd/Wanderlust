@@ -250,3 +250,13 @@ body {
     margin-left: 0.5em;
     margin-right: 0.5em;
 }
+
+.paymentMethodPaypalLower{
+    color: rgb(5, 5, 126);
+    font-size: 2em;
+}
+
+.paymentMethodSatispayLower{
+    color: rgb(241, 79, 79);
+    font-size: 2em;
+}

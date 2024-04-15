@@ -156,14 +156,14 @@
                     </div>
                 </form>
             </div>
-            {%else%}
+            {% elif current_user.is_authenticated and current_user.id != viaggio.id_coordinatore %}
             <form action="{{url_for('pagina_prenotazione', id_viaggio = viaggio.id, id_utente = current_user.id)}}", method="POST">
                 <button type="submit" class="btn btn-outline-success btn-sm fontCopperplate" data-bs-toggle="modal" data-bs-target="#modalPrenotazione">
                     Prenota
                 </button>
             </form>
-
-
+            {%elif current_user.is_authenticated == False %}
+            <p class="pMarginNegativo fontCopperplate">Per prenotare un viaggio, devi prima <a href="{{url_for('iscriviti')}}">registrarti</a> su Wanderlust!</p>
             {%endif%}
         </section>
 

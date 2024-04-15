@@ -57,20 +57,73 @@
 
                 <article class="d-flex justify-content-between mx-3 align-items-center">
                     <section class="d-flex justify-content-start align-items-center">
-                        <p class="fontCopperplate me-2 pMarginNegativo">TOTALE:</p>
-                        <p class="fontCopperplate pMarginNegativo">{{viaggio.prezzo}}€</p>
+                        <p class="fontCopperplate me-2 pMarginNegativo fs-5">TOTALE:</p>
+                        <p class="fontCopperplate pMarginNegativo fs-5">{{viaggio.prezzo}}€</p>
                     </section>
                     <button type = "submit" class="btn btn-sm btn-outline-primary">Conferma</button>
                 </article>
             </form>
         </section>
 
-        <section class="collapse border mt-3" id="collapsePaypal">
-            <p>paypal</p>
+        <section class="collapse border mt-3 py-3" id="collapsePaypal">
+            <form>
+                <h5 class="fontCopperplate fs-5 mx-3 border-bottom">Inserisci i tuoi dati Paypal</h5>
+                <div class="d-flex justify-content-center align-items-center mt-3 mb-1">
+                    <i class="bi bi-paypal paymentMethodPaypalLower"></i>
+                </div>
+                <section class="mb-3 mx-3">
+                    <label for="emailPaypal" class="form-label">Email</label>
+                    <input type="email" class="form-control" name="emailPaypal" id="emailPaypal" required>
+                </section>
+
+                <section class="mb-3 mx-3">
+                    <label for="passwordPaypal" class="form-label">Password</label>
+                    <input type="password" class="form-control" name="passwordPaypal" id="passwordPaypal" required>
+                </section>
+
+                <article class="d-flex justify-content-between mx-3 align-items-center">
+                    <section class="d-flex justify-content-start align-items-center">
+                        <p class="fontCopperplate me-2 pMarginNegativo fs-5">TOTALE:</p>
+                        <p class="fontCopperplate pMarginNegativo fs-5">{{viaggio.prezzo}}€</p>
+                    </section>
+                    <button type = "submit" class="btn btn-sm btn-outline-primary">Conferma</button>
+                </article>
+            </form>
         </section>
 
-        <section class="collapse border mt-3" id="collapseSatispay">
-            <p>satispay</p>
+        <section class="collapse border mt-3 py-3" id="collapseSatispay">
+            <form>
+                <h5 class="fontCopperplate fs-5 mx-3 border-bottom">Inserisci il tuo numero di telefono</h5>
+                <div class="d-flex justify-content-center align-items-center mt-3 mb-1">
+                    <i class="bi bi-stripe paymentMethodSatispayLower"></i>
+                </div>
+
+                <section class="mb-3 mx-3">
+                    <label class = "col-form-label" for = "prefisso">Prefisso</label>
+                    <select id="prefisso" name="prefisso" class="form-select" aria-label="Default select example" required>
+                        <option selected>(+39) Italia</option>
+                        {% for key, value in paesi_prefissi.items() %}
+                        <option value="{{ value }}">({{ value }}) {{ key }}</option>
+                        {% endfor %}
+                    </select> 
+                </section>
+
+                <section class="mb-3 mx-3">
+                    <label for="numTelefonoSati" class="form-label">Numero di telefono</label>
+                    <input type="tel" class="form-control" name="numTelefonoSati" id="numTelefonoSati" pattern="[0-9]{9,14}" title="Inserisci un numero di telefono valido (da 9 a 14 cifre numeriche)" required>
+                </section>
+
+                <article class="d-flex justify-content-between mx-3 align-items-center">
+                    <section class="d-flex justify-content-start align-items-center">
+                        <p class="fontCopperplate me-2 pMarginNegativo fs-5">TOTALE:</p>
+                        <p class="fontCopperplate pMarginNegativo fs-5">{{viaggio.prezzo}}€</p>
+                    </section>
+                    <button type = "submit" class="btn btn-sm btn-outline-primary">Conferma</button>
+                </article>
+            </form>
+
+            
+
         </section>
     </article>
 </div>
