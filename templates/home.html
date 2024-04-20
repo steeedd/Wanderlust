@@ -8,10 +8,45 @@
 </section>
 {%endblock%}
 {% block content %}
+<article id="articleHomeFilter" class="d-flex align-items-center justify-content-between rounded-4">
+    <section class="d-flex justify-content-start align-items-center">
+        <p class="pMarginNegativo align-content-center fontCopperplate me-4 fs-5">Ordina per:</p>
+        <section id="sectionPrezzo" class="d-flex justify-content-start p-2 me-2 filterSection rounded-3 text-success">
+            <i class="bi bi-arrow-up me-1"></i>
+            <span class="fontCopperplate">Prezzo</span>
+        </section>
+        <section id = "sectionPartecipanti" class="d-flex justify-content-start p-2 filterSection rounded-3 text-success">
+            <i class="bi bi-arrow-down me-1"></i>
+            <span class="fontCopperplate">Numero di partecipanti</span>
+        </section>
+    </section>
+    <section class="d-flex justify-content-start align-items-center">
+        <div class="dropdown me-3">
+            <a id = "continentAnchor" class="btn btn-outline-success dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Continente
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item">Tutti</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item">Africa</a></li>
+                <li><a class="dropdown-item">Asia</a></li>
+                <li><a class="dropdown-item">Europa</a></li>
+                <li><a class="dropdown-item">NordAmerica</a></li>
+                <li><a class="dropdown-item">SudAmerica</a></li>
+                <li><a class="dropdown-item">Oceania</a></li>
+            </ul>
+        </div>
+        <form class="d-flex" role="search">
+            <input id = "nationFilter" class="form-control me-2" type="search" placeholder="Cerca una nazione..." aria-label="Cerca una nazione...">
+            <span class="border-0 input-group-text" id="basic-addon2"><i class="bi bi-search"></i></span>
+        </form>
+
+    </section>
+</article>
 <section class="d-flex flex-wrap">
     {%for viaggio in viaggi_approvati%}
     {%if viaggio.data > oggi%}
-    <article class="me-4 ms-3 mb-4 image-container">
+    <article class="me-4 ms-3 mb-4 image-container" data-prezzo="{{viaggio.prezzo}}" data-partecipanti = "{{viaggio.partecipanti}}" data-continente="{{viaggio.continente}}" data-nazione = {{viaggio.nazione}}>
         <a href="{{url_for('pagina_viaggio', id_viaggio = viaggio.id)}}"><img class="zoomable rounded" src="{{url_for('static', filename = 'viaggio/'+viaggio.img_viaggio)}}" alt="Questa è l'immagine del viaggio in {{viaggio.nazione}}"></a>
         <div class="fav-button text-white d-flex justify-content-start fs-5">
             {%if viaggio.continente == 'Africa' or viaggio.continente=='Europa'%}
@@ -25,10 +60,14 @@
             {%endif%}
             <p class="fontCopperplate fw-semibold">{{viaggio.nazione}}</p>
         </div>
+        <section class="d-flex fav-button2 justify-content-start align-items-center text-white fw-bold fs-4">
+            <i class="bi bi-people-fill me-1"></i>
+            <p class="pMarginNegativo align-content-center">{{viaggio.partecipanti}}</p>
+        </section>
         <p class="titleImgPos">{{viaggio.titolo}}</p>
         <section class="d-flex justify-content-start align-items-center sectionDaysImgPos">
             <i class="bi bi-calendar-date me-2"></i>
-            <p class="pMarginNegativo">{{viaggio.num_giorni}} giorni</p>
+            <p class="pMarginNegativo">{{viaggio.data}}</p>
         </section>
         <p class="priceImgPos pMarginNegativo">{{viaggio.prezzo}} €</p>
     </article>
@@ -36,4 +75,13 @@
     {%endfor%}
 </section>
 
+<article id = "messaggioAvviso" class="text-danger fs-3 d-flex justify-content-start align-items-center ms-5 hide">
+    <i class="bi bi-x-circle me-2"></i>
+    <p class="pMarginNegativo"> Al momento non ci sono annunci sul nostro sito che rispettano i vincoli richiesti.</p>
+</article>
+
+{%endblock%}
+
+{%block js%}
+<script src="{{url_for('static', filename='homeFilters.js')}}" type="text/javascript"></script>
 {%endblock%}

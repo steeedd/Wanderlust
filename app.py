@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 import os
 
 from models import User
-import utenti_dao, viaggi_dao
+import utenti_dao, viaggi_dao, recensioni_dao
 
 
 app = Flask(__name__)
@@ -30,9 +30,16 @@ def index():
 @app.route('/home', methods=['GET', 'POST'])
 def home():
     viaggi_approvati = viaggi_dao.getViaggiApprovati()
+    lista_viaggi_con_partecipanti = []
+    for viaggio in viaggi_approvati:
+        viaggio = dict(viaggio)
+        num_partecipanti = viaggi_dao.getNumeroPartecipantiViaggio(viaggio['id'])
+        viaggio['partecipanti'] = num_partecipanti['partecipanti']
+        lista_viaggi_con_partecipanti.append(viaggio)
+
     oggi = datetime.now().strftime('%Y-%m-%d')
 
-    return render_template('home.html', viaggi_approvati=viaggi_approvati, oggi=oggi)
+    return render_template('home.html', viaggi_approvati=lista_viaggi_con_partecipanti, oggi=oggi)
 
 @app.route('/registrazione')
 def iscriviti():
@@ -126,16 +133,16 @@ def login_page():
 def login():
     user_logged = request.form.to_dict()
     utente = utenti_dao.getUtenteByEmail(user_logged.get('email'))
-
-    if utente['banned'] == 1:
-        flash(f'Ciao {utente["nome"]}. Siamo spiacenti di informarti che il tuo account è stato bannato dal nostro sito. Questa decisione è stata presa a seguito di una violazione dei nostri Termini di Servizio o delle nostre Linee Guida della Comunità. Se credi che questo ban sia stato un errore o desideri chiarimenti sulla sua motivazione, ti preghiamo di contattare il nostro team di supporto all\'indirizzo mail info@wanderlust.com.', 'warning')
-        return redirect(url_for('index'))
     
     if utente and check_password_hash(utente['password'], user_logged.get('password')):
-        flash('Login effettuato con successo!', 'success')
-        new = User(id=utente['id'], nome = utente['nome'], cognome = utente['cognome'], email = utente['email'], password = utente['password'], tipologia = utente['tipologia'], img_profilo = utente['img_profilo'])
-        login_user(new)
-        return redirect(url_for('index'))
+        if utente['banned'] == 1:
+            flash(f'Ciao {utente["nome"]}. Siamo spiacenti di informarti che il tuo account è stato bannato dal nostro sito. Questa decisione è stata presa a seguito di una violazione dei nostri Termini di Servizio o delle nostre Linee Guida della Comunità. Se credi che questo ban sia stato un errore o desideri chiarimenti sulla sua motivazione, ti preghiamo di contattare il nostro team di supporto all\'indirizzo mail info@wanderlust.com.', 'warning')
+            return redirect(url_for('index'))
+        else:
+            flash('Login effettuato con successo!', 'success')
+            new = User(id=utente['id'], nome = utente['nome'], cognome = utente['cognome'], email = utente['email'], password = utente['password'], tipologia = utente['tipologia'], img_profilo = utente['img_profilo'])
+            login_user(new)
+            return redirect(url_for('index'))
 
     else:
         flash('La mail e/o la password inserita non è corretta', 'danger')
@@ -145,6 +152,7 @@ def login():
 @app.route('/profilo', methods = ['POST', 'GET'])
 @login_required
 def area_personale():
+    oggi = datetime.today().strftime('%Y-%m-%d')
     un_mese_dopo = (datetime.now() + timedelta(weeks=4)).strftime('%Y-%m-%d')
     aeroporti_italiani = [
     "Roma-Fiumicino - FCO", "Milano-Malpensa - MXP", "Milano-Linate - LIN", "Venezia Marco Polo - VCE", "Napoli-Capodichino - NAP", "Firenze-Peretola - FLR", "Bologna-Guglielmo Marconi - BLQ", "Catania-Fontanarossa - CTA", "Palermo-Punta Raisi - PMO", "Bergamo-Orio al Serio - BGY", "Pisa Galileo Galilei - PSA", "Verona-Villafranca - VRN", "Torino-Caselle - TRN", "Bari-Palese - BRI", "Cagliari-Elmas - CAG", "Trapani-Birgi - TPS", "Brindisi-Casale - BDS", "Genova-Cristoforo Colombo - GOA", "Perugia-Sant'Egidio - PEG", "Ancona-Falconara - AOI"
@@ -157,7 +165,21 @@ def area_personale():
         viaggi_coordinatore = viaggi_dao.getViaggiCoordinatoreFiltro(current_user.id, filtro)
 
 
-    return render_template('profilo.html', un_mese_dopo=un_mese_dopo, aeroporti_italiani=aeroporti_italiani, viaggi_coordinatore = viaggi_coordinatore, filtroApprovazione=filtroApprovazione)
+    viaggi_prenotati = viaggi_dao.getViaggiPrenotati(current_user.id)
+    viaggi_filtrati = []
+    filtroDataViaggio = request.form.get('filtroDataViaggio', 'all')
+    if filtroDataViaggio == "futuro":
+        for viaggio in viaggi_prenotati:
+            if viaggio['data'] >= oggi:
+                viaggi_filtrati.append(viaggio)
+    elif filtroDataViaggio == "passato":
+        for viaggio in viaggi_prenotati:
+            if viaggio['data'] < oggi:
+                viaggi_filtrati.append(viaggio)
+    else:
+        viaggi_filtrati = viaggi_prenotati
+
+    return render_template('profilo.html', un_mese_dopo=un_mese_dopo, aeroporti_italiani=aeroporti_italiani, viaggi_coordinatore = viaggi_coordinatore, filtroApprovazione=filtroApprovazione, viaggi_prenotati = viaggi_filtrati, filtroDataViaggio = filtroDataViaggio, oggi = oggi)
 
 @app.route('/viaggio/<int:id_viaggio>')
 def pagina_viaggio(id_viaggio):
@@ -170,9 +192,12 @@ def pagina_viaggio(id_viaggio):
     for id in lista_id_utenti_partecipanti:
         lista_id_result.append(id['id_utente'])
 
+    nazione = viaggio['nazione']
+    recensioni_viaggio = recensioni_dao.getRecensioniViaggio(nazione)
+
     oggi = datetime.today().strftime('%Y-%m-%d')
 
-    return render_template('viaggio.html', viaggio = viaggio, aeroporti_italiani=aeroporti_italiani, lista_id_partecipanti = lista_id_result, oggi=oggi)
+    return render_template('viaggio.html', viaggio = viaggio, aeroporti_italiani=aeroporti_italiani, lista_id_partecipanti = lista_id_result, oggi=oggi, recensioni_viaggio = recensioni_viaggio)
 
 @app.route('/<int:id_utente>/nuovo_viaggio', methods=['POST'])
 @login_required
@@ -566,6 +591,51 @@ def pagamento(id_viaggio, id_utente):
         flash('Si sono verificati degli errori e il pagamento non è andato a buon fine, riprova più tardi!', 'warning')
         return redirect(url_for('pagina_prenotazione', id_viaggio = id_viaggio, id_utente = id_utente))
     
+@app.route('/nuova_recensione/<int:id_viaggio>/<int:id_utente>', methods = ['POST'])
+@login_required
+def nuova_recensione(id_viaggio, id_utente):
+    already_recensito = recensioni_dao.getRecensioneViaggioUtente(id_viaggio, id_utente)
+    if already_recensito:
+        flash('Hai già recensito questo viaggio!', 'warning')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    
+    testo = request.form.get('testo')
+    valutazione_relax = int(request.form.get('valutazione_relax'))
+    valutazione_avventura = int(request.form.get('valutazione_avventura'))
+    valutazione_divertimento = int(request.form.get('valutazione_divertimento'))
+
+    if testo == "" or len(testo) < 30:
+        flash('Devi inserire un testo di almeno 30 caratteri per la recensione del viaggio!', 'warning')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    
+    if valutazione_relax != 1 and valutazione_relax != 2 and valutazione_relax != 3 and valutazione_relax != 4 and valutazione_relax != 5:
+        flash('La valutazione inserita non è valida!', 'warning')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    
+    if valutazione_avventura != 1 and valutazione_avventura != 2 and valutazione_avventura != 3 and valutazione_avventura != 4 and valutazione_avventura != 5:
+        flash('La valutazione inserita non è valida!', 'warning')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    
+    if valutazione_divertimento != 1 and valutazione_divertimento != 2 and valutazione_divertimento != 3 and valutazione_divertimento != 4 and valutazione_divertimento != 5:
+        flash('La valutazione inserita non è valida!', 'warning')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    
+    recensione = {
+        'id_viaggio': id_viaggio,
+        'id_utente': id_utente,
+        'testo': testo,
+        'valutazione_relax': valutazione_relax,
+        'valutazione_avventura': valutazione_avventura,
+        'valutazione_divertimento': valutazione_divertimento
+    }
+
+    success = recensioni_dao.inserisciRecensione(recensione)
+    if success:
+        flash('La recensione è stata inserita con successo', 'success')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    else:
+        flash('Si sono verificati degli errori... riprova più tardi!', 'warning')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
 
 
 @app.errorhandler(404)

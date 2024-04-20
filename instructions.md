@@ -13,7 +13,11 @@ password: chiara1
 email: gabriele@locci.it
 password: gabriele1
 
-3. (bannato)
+3. 
+email: joseph@salazar.it
+password: joseph1
+
+4. (bannato)
 email: giuseppe@ave.it
 passowrd: giuseppe1
 

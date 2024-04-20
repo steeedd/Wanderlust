@@ -3,9 +3,9 @@ const continentSelect = document.getElementById('continente');
 const countrySelect = document.getElementById('nazione');
 
 const countriesByContinent = {
-    Africa: ['Algeria', 'Angola', 'Egitto', 'Etiopia', 'Nigeria', 'Sudafrica', 'Tanzania', 'Kenya', 'Marocco', 'Uganda', 'Seychelles'],
+    Africa: ['Algeria', 'Angola', 'Egitto', 'Etiopia', 'Nigeria', 'Sudafrica', 'Madagascar', 'Tanzania', 'Kenya', 'Marocco', 'Uganda', 'Seychelles'],
     Asia: ['Cina', 'India', 'Indonesia', 'Giappone', 'Giordania', 'Pakistan', 'Bangladesh', 'Filippine', 'Vietnam', 'Iran', 'Turchia', 'Maldive'],
-    Europa: ['Francia', 'Germania', 'Italia', 'Spagna', 'Regno Unito', 'Russia', 'Olanda', 'Svezia', 'Polonia', 'Austria'],
+    Europa: ['Francia', 'Islanda', 'Germania', 'Italia', 'Spagna', 'Regno Unito', 'Russia', 'Olanda', 'Svezia', 'Polonia', 'Austria'],
     NordAmerica: ['Stati Uniti', 'Canada', 'Messico', 'Cuba', 'Giamaica', 'Costa Rica', 'Panama', 'Haiti', 'El Salvador', 'Honduras'],
     SudAmerica: ['Brasile', 'Argentina', 'Colombia', 'Perù', 'Venezuela', 'Cile', 'Cuba', 'Ecuador', 'Bolivia', 'Paraguay', 'Uruguay'],
     Oceania: ['Australia', 'Nuova Zelanda', 'Fiji', 'Papua Nuova Guinea', 'Isole Salomone', 'Vanuatu', 'Samoa', 'Tonga', 'Kiribati', 'Nauru']

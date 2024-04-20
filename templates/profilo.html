@@ -158,7 +158,7 @@
             <p class="titleImgPos">{{viaggio.titolo}}</p>
             <section class="d-flex justify-content-start align-items-center sectionDaysImgPos">
                 <i class="bi bi-calendar-date me-2"></i>
-                <p class="pMarginNegativo">{{viaggio.num_giorni}} giorni</p>
+                <p class="pMarginNegativo">{{viaggio.data}}</p>
             </section>
             <p class="priceImgPos pMarginNegativo">{{viaggio.prezzo}} €</p>
             {%if viaggio.approvato == 1%}
@@ -176,6 +176,53 @@
         {%endfor%}
     </section>
     {%endif%}
+
+    <section>
+        <h3 class="fw-bold display-5 fs-4 fontCopperplate mb-2 ms-2 pt-4 border-top">Le tue prenotazioni</h3>
+        <div class="dropdown mb-4 ms-2">
+            <form action = "{{url_for('area_personale')}}" method="POST">
+                <button class="fontCopperplate btn {%if filtroDataViaggio == 'all'%}btn-outline-secondary{%elif filtroDataViaggio=='futuro'%}btn-outline-success{%else%}btn-outline-warning{%endif%} dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    {%if filtroDataViaggio == 'all'%}Tutti
+                    {%elif filtroDataViaggio== 'futuro'%} Viaggi futuri
+                    {%else%} Viaggi passati
+                    {%endif%}
+                </button>
+                <ul class="dropdown-menu">
+                {# Quando sottometto il form, passo al server il value del button, che mi servirà per filtrare tra le diverse proposte #}
+                    <li><button type="submit" class="dropdown-item fontCopperplate" name="filtroDataViaggio" value="all">Tutti</button></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><button type="submit" class="dropdown-item fontCopperplate" name="filtroDataViaggio" value="futuro">Viaggi futuri</button></li>
+                    <li><button type="submit" class="dropdown-item fontCopperplate" name="filtroDataViaggio" value="passato">Viaggi passati</button></li>
+                </ul>
+            </form>
+        </div>
+        {%for viaggio in viaggi_prenotati%}
+        <article class="me-4 ms-2 mb-4 image-container">
+            <a href="{{url_for('pagina_viaggio', id_viaggio = viaggio.id)}}"><img class="zoomable rounded" src="{{url_for('static', filename = 'viaggio/'+viaggio.img_viaggio)}}" alt="Questa è l'immagine del viaggio in {{viaggio.nazione}}"></a>
+            <p class="titleImgPos">{{viaggio.titolo}}</p>
+            <section class="d-flex justify-content-start align-items-center sectionDaysImgPos">
+                <i class="bi bi-calendar-date me-2"></i>
+                <p class="pMarginNegativo">{{viaggio.data}}</p>
+            </section>
+            <p class="priceImgPos pMarginNegativo">{{viaggio.prezzo}} €</p>
+            {%if viaggio.data >= oggi%}
+            <div class="fav-button d-flex justify-content-start align-items-center bg-success text-white fs-5 ps-1 bg-opacity-75"> 
+                <i class="bi bi-suitcase2 me-1"></i>
+                <p class="pMarginNegativo pe-1 fontCopperplate">Prepara la valigia</p>
+            </div>
+            {%else%}
+            <div class="fav-button d-flex justify-content-start align-items-center bg-warning text-white fs-5 ps-1 bg-opacity-75"> 
+                <i class="bi bi-card-text me-2"></i>
+                <p class="pMarginNegativo pe-1 fontCopperplate">Lascia una recensione</p>
+            </div>
+            {%endif%}
+
+        </article>
+        {%endfor%}
+    </section>
+
+
+
 </section>
 
 {%endblock%}

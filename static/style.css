@@ -45,6 +45,10 @@ body {
     color: #fff;
 }
 
+.fontChancery{
+    font-family: Apple Chancery, cursive;
+}
+
 .destination_text:hover{
     text-decoration: underline;
 }
@@ -207,6 +211,13 @@ body {
     z-index: 998;
 }
 
+.fav-button2 {
+    position: absolute;
+    top: 0.5em;
+    left: 0.5em;
+    z-index: 998;
+}
+
 #sectionHome{
     background-image: url("indexPics/foto_di_gruppo.jpg");
     background-size: cover;
@@ -259,4 +270,58 @@ body {
 .paymentMethodSatispayLower{
     color: rgb(241, 79, 79);
     font-size: 2em;
+}
+
+.paymentMethodCreditCardLower{
+    font-size: 2em;
+}
+
+.articleReview{
+    max-height: 14em;
+    overflow-y: auto;
+}
+
+#divRecensioni{
+    overflow-x: auto;
+}
+
+.scrollingIcon{
+    font-size: 3em;
+    color: rgb(106, 200, 106);
+}
+
+.scrollingIcon:hover{
+    cursor: pointer;
+}
+
+#articleHomeFilter{
+    width: 95%;
+    height: 6em;
+    border: 2px solid rgb(168, 221, 168);
+    margin-bottom: 3em;
+}
+
+.filterSection:hover{
+    background-color: rgb(168, 221, 168);
+    cursor: pointer;
+}
+
+.selected{
+    background-color: rgb(168, 221, 168);
+}
+
+#sectionPartecipanti{
+    border: 1.4px solid #28a745;
+}
+
+#sectionPrezzo{
+    border: 1.4px solid #28a745;
+}
+
+.hide{
+    display: none !important;
+}
+
+.nascondi {
+    display: none !important;
 }

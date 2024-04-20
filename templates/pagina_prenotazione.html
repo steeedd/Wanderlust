@@ -17,6 +17,9 @@
             <h5 class="fontCopperplate fs-5 mx-3 border-bottom">Inserisci i dati della carta</h5>
             <form method="POST" action="{{url_for('pagamento', id_viaggio = viaggio.id, id_utente = utente.id)}}">
                 <input type="hidden" name="method" value="creditcard">
+                <div class="d-flex justify-content-center align-items-center mt-3 mb-1">
+                    <i class="bi bi-credit-card paymentMethodCreditCardLower"></i>
+                </div>
                 <section class="m-3">
                     <label for="cardNumber" class="form-label">Numero della carta</label>
                     <input type="text" placeholder="0000 1234 5678 9999" class="form-control" name="cardNumber" id="cardNumber" required>

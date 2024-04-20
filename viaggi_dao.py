@@ -181,6 +181,17 @@ def getViaggiApprovati():
     connection.close()
     return result 
 
+def getNumeroPartecipantiViaggio(id_viaggio):
+    query = 'SELECT COUNT(id_utente) as partecipanti FROM partecipazioni_viaggi WHERE id_viaggio = ?'
+    connection = sqlite3.connect('db/wanderlust.db')
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+    cursor.execute(query, (id_viaggio,))
+    result = cursor.fetchone()
+    cursor.close()
+    connection.close()
+    return result 
+
 
 def modificaImmagineViaggio(img_viaggio, id_viaggio):
     success = False
@@ -242,6 +253,18 @@ def getUtentiPartecipantiAlViaggio(id_viaggio):
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
     cursor.execute(query, (id_viaggio,))
+    result = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return result 
+
+
+def getViaggiPrenotati(id_utente):
+    query = 'SELECT * FROM partecipazioni_viaggi, viaggi WHERE viaggi.id = partecipazioni_viaggi.id_viaggio AND partecipazioni_viaggi.id_utente = ? AND viaggi.id_coordinatore != partecipazioni_viaggi.id_utente'
+    connection = sqlite3.connect('db/wanderlust.db')
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+    cursor.execute(query, (id_utente,))
     result = cursor.fetchall()
     cursor.close()
     connection.close()

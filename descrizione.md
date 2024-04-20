@@ -17,6 +17,7 @@ I viaggi verso una stessa destinazione non sono unici; possono esserci molteplic
 # PAGINE WEB
 * Home:
     - elenco dei viaggi disponibili
+    - filtro di ricerca per nazione
     - filtro dei viaggi per continente
     - filtro per visualizzare i viaggi in ordine crescente di prezzo
     - filtro per visualizzare i viaggi in ordine decrescente di partecipanti attuali
