@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 import os
 
 from models import User
-import utenti_dao, viaggi_dao, recensioni_dao
+import utenti_dao, viaggi_dao, recensioni_dao, messaggi_dao
 
 
 app = Flask(__name__)
@@ -258,7 +258,7 @@ def nuovo_viaggio(id_utente):
         flash('La descrizione deve essere formata da un minimo di 100 caratteri', 'danger')
         return redirect(url_for('area_personale'))
     if len(titolo) < 3 or len(titolo) > 70:
-        flash('Il requisito sulla lunghezza del titolo non è rispettato. Deve avere un numero di caratteri compreso fra 3 e 40!', 'danger')
+        flash('Il requisito sulla lunghezza del titolo non è rispettato. Deve avere un numero di caratteri compreso fra 3 e 70!', 'danger')
         return redirect(url_for('area_personale'))
     
     
@@ -637,6 +637,55 @@ def nuova_recensione(id_viaggio, id_utente):
         flash('Si sono verificati degli errori... riprova più tardi!', 'warning')
         return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
 
+
+@app.route('/<int:id_viaggio>/pagina_messaggi', methods=['GET', 'POST'])
+@login_required
+def pagina_messaggi(id_viaggio):
+    lista_partecipanti = viaggi_dao.getPartecipazioniViaggio(id_viaggio)
+
+    partecipante_presente = False
+    for partecipante in lista_partecipanti:
+        if current_user.id == partecipante['id_utente']:
+            partecipante_presente = True
+
+    if not partecipante_presente:
+        return render_template('405.html'), 405
+    
+    viaggio = viaggi_dao.getViaggio(id_viaggio)
+    oggi = datetime.today().strftime('%Y-%m-%d')
+    if viaggio['data'] < oggi:
+        flash('Non si può visualizzare la chat di un viaggio passato!', 'warning')
+        return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
+    
+    messaggi = messaggi_dao.getMessaggiViaggio(id_viaggio)
+        
+    return render_template('chat.html', viaggio = viaggio, messaggi = messaggi)
+
+
+@app.route('/<int:id_viaggio>/<int:id_utente>/nuovo_messaggio', methods=['POST'])
+@login_required
+def nuovo_messaggio(id_viaggio, id_utente):
+    txtMessaggio = request.form.get('txtMessage')
+    if txtMessaggio == "" or len(txtMessaggio) < 4:
+        flash("Il messaggio deve contenere almeno 4 caratteri!", 'warning')
+        return redirect(url_for('pagina_messaggi', id_viaggio = id_viaggio))
+    
+    data_attuale = datetime.now().strftime('%d-%m-%Y, %H:%M')
+    messaggio = {
+        'id_viaggio': id_viaggio,
+        'id_utente': id_utente,
+        'testo': txtMessaggio,
+        'data': data_attuale
+    }
+
+    success = messaggi_dao.inserisciMessaggio(messaggio)
+    if success:
+        flash('Il messaggio è stato pubblicato con successo!', 'success')
+        return redirect(url_for('pagina_messaggi', id_viaggio = id_viaggio))
+
+    else:
+        flash('Si sono verificati degli errori nella pubblicazione del messaggio...', 'warning')
+        return redirect(url_for('pagina_messaggi', id_viaggio = id_viaggio))
 
 @app.errorhandler(404)
 def page_not_found(e):

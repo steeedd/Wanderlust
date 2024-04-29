@@ -71,7 +71,11 @@
                     Lista partecipanti
                 </button>
             </form>
-
+            {%if viaggio.data > oggi%}
+            <form action="{{url_for('pagina_messaggi', id_viaggio = viaggio.id)}}", method="POST">
+                <button type="submit" class="btn btn-outline-primary btn-sm fontCopperplate">Messaggi</button>
+            </form>
+            {%endif%}
             <div>
                 <!-- Button trigger modal -->
                 <button type="button" class="btn btn-outline-secondary btn-sm me-3 fontCopperplate" data-bs-toggle="modal" data-bs-target="#modalModifica" {%if oggi>=viaggio.data%}disabled{%endif%}>
@@ -157,14 +161,19 @@
                 </form>
             </div>
             {% elif current_user.is_authenticated and current_user.id != viaggio.id_coordinatore %}
-            {%if current_user.id not in lista_id_partecipanti and viaggio.data > oggi%}
+            {%if current_user.id not in lista_id_partecipanti and viaggio.data > oggi and viaggio.approvato == 1%}
             <form action="{{url_for('pagina_prenotazione', id_viaggio = viaggio.id, id_utente = current_user.id)}}", method="POST">
                 <button type="submit" class="btn btn-outline-success btn-sm fontCopperplate" data-bs-toggle="modal" data-bs-target="#modalPrenotazione">
                     Prenota
                 </button>
             </form>
             {%elif current_user.id in lista_id_partecipanti and oggi <= viaggio.data %}
-            <p class="pMarginNegativo fontCopperplate text-success fs-5">Preparati a vivere un'esperienza indimenticabile!</p>
+            <section class="d-flex justify-content-between align-items-center">
+                <p class="pMarginNegativo fontCopperplate text-success fs-6 me-5">Preparati a vivere un'esperienza indimenticabile!</p>
+                <form action="{{url_for('pagina_messaggi', id_viaggio = viaggio.id)}}", method="POST">
+                    <button type="submit" class="btn btn-outline-primary btn-sm fontCopperplate">Messaggi</button>
+                </form>
+            </section>
             {%elif current_user.id in lista_id_partecipanti and oggi > viaggio.data%}
             <form action="{{url_for('nuova_recensione', id_viaggio = viaggio.id, id_utente = current_user.id)}}", method="POST">
                 <button type = "button" class="btn btn-sm btn-warning fontCopperplate" data-bs-toggle="modal" data-bs-target="#recensioneDaPaginaViaggioModal">Lascia una recensione</button>

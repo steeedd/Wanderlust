@@ -1,12 +1,12 @@
 // Funzione che serve per ordinare gli annunci in ordine crescente di prezzo
 function orderByPrice() {
     const articles = document.querySelectorAll('.image-container');
-    const sortedArticles = Array.from(articles).sort((a, b) => {
+    const sortedArticles = Array.from(articles).sort((a, b) => { //.querySelectorAll() restituisci una nodeList. La nodeList non ha il metodo .sort(), e quindi con Array.from(articles) trasformo la nodeList in un array JS.
         const priceA = parseFloat(a.dataset.prezzo);
         const priceB = parseFloat(b.dataset.prezzo);
         return priceA - priceB;
     });
-    const section = document.querySelector('.d-flex.flex-wrap');
+    const section = document.querySelector('#sectionViaggi');
     section.innerHTML = '';
     sortedArticles.forEach(article => {
         section.appendChild(article);
@@ -24,7 +24,7 @@ function orderByParticipants() {
         const participantsB = parseInt(b.dataset.partecipanti);
         return participantsB - participantsA;
     });
-    const section = document.querySelector('.d-flex.flex-wrap');
+    const section = document.querySelector('#sectionViaggi');
     section.innerHTML = '';
     sortedArticles.forEach(article => {
         section.appendChild(article);
@@ -72,7 +72,7 @@ document.querySelectorAll('.dropdown-item').forEach(item => {
 
 
 // Filtro per nazione
-document.getElementById('nationFilter').addEventListener('keyup', e => {
+document.getElementById('nationFilter').addEventListener('keyup', e => { // keyup è un evento che viene attivato quando un tasto della tastiera viene rilasciato mentre un elemento DOM ha il focus, in questo caso l'input con ID nationFilter
     e.preventDefault();
   
     let filter = document.getElementById('nationFilter').value.toLowerCase();

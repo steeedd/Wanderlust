@@ -43,7 +43,7 @@
 
     </section>
 </article>
-<section class="d-flex flex-wrap">
+<section id ="sectionViaggi" class="d-flex flex-wrap">
     {%for viaggio in viaggi_approvati%}
     {%if viaggio.data > oggi%}
     <article class="me-4 ms-3 mb-4 image-container" data-prezzo="{{viaggio.prezzo}}" data-partecipanti = "{{viaggio.partecipanti}}" data-continente="{{viaggio.continente}}" data-nazione = {{viaggio.nazione}}>

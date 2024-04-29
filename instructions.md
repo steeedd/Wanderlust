@@ -30,6 +30,30 @@ password: fernanda1
 email: mirko@verdi.it
 password: mirko123
 
-3. (bannato)
+3. 
+email: alessia@rossi.it
+password: alessia1
+
+4. 
+email: nicola@viola.it
+password: nicola1
+
+5. 
+email: franco@lupo.it
+password: franco1
+
+6. 
+email: irene@volpe.it
+password: irene1
+
+7. 
+email: jamal@musiala.it
+password: jamal1
+
+8. 
+email: antonio@verde.it
+password: antonio1
+
+9. (bannato)
 email: francesco@somaro.it  
 password: francesco1

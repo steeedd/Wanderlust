@@ -48,9 +48,3 @@ I viaggi verso una stessa destinazione non sono unici; possono esserci molteplic
     - form per l'inserimento dei dati
 
 * Pagina ERROR 404/405
-
-# DATABASE
-
-* utenti: id (primary key, nn, unique, int), email (text, unique, nn), password (text, nn), nome (text, nn), cognome (text, nn), img_profilo (text), tipologia (text - 'admin', 'cliente', 'coordinatore')
-
-* viaggi
