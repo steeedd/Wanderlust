@@ -329,7 +329,7 @@ body {
 
 #sectionChat{
     max-height: 50em;
-    width: 85%;
+    width: 80%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
