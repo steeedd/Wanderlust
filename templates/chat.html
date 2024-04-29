@@ -40,7 +40,7 @@
     <article class="border-top pt-2 border-4 border-success">
         <form action = "{{url_for('nuovo_messaggio', id_viaggio = viaggio.id, id_utente = current_user.id)}}" method="POST" class="mb-2">
             <div class="mb-2">
-                <label for="textAreaComment" class="form-label">Nuovo messaggio</label>
+                <label for="textAreaComment" class="form-label fontCopperplate">Nuovo messaggio</label>
                 <textarea name = "txtMessage" class="form-control" id="textAreaComment" rows="2" placeholder="Scrivi un messaggio" minlength="4"></textarea>
             </div>
             <div class="d-flex justify-content-between">
