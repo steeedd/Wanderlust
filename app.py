@@ -604,7 +604,7 @@ def nuova_recensione(id_viaggio, id_utente):
     valutazione_avventura = int(request.form.get('valutazione_avventura'))
     valutazione_divertimento = int(request.form.get('valutazione_divertimento'))
 
-    if testo == "" or len(testo) < 30:
+    if len(testo) < 30:
         flash('Devi inserire un testo di almeno 30 caratteri per la recensione del viaggio!', 'warning')
         return redirect(url_for('pagina_viaggio', id_viaggio = id_viaggio))
     

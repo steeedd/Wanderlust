@@ -12,7 +12,7 @@ Gli utenti, sulla homepage del sito, trovano l'elenco completo dei viaggi dispon
 
 Ogni utente ha una pagina profilo con sezioni dedicate alle informazioni personali e ai viaggi. La sezione viaggi è suddivisa tra viaggi passati e futuri. La pagina profilo è personale, consentendo a ogni utente di visualizzare solo la propria pagina, senza accesso alle pagine degli altri utenti.
 
-I viaggi verso una stessa destinazione non sono unici; possono esserci molteplici partenze per lo stesso paese, con l'unica restrizione di evitare partenze nello stesso giorno per lo stesso luogo. Gli utenti che partecipano a un viaggio hanno la possibilità, in una data successiva, di lasciare una recensione. La recensione non è visibile solo nella pagina del viaggio passato, ma anche nelle pagine di tutti i viaggi con la stessa destinazione. Inoltre, l'utente può modificarla in qualsiasi momento.
+I viaggi verso una stessa destinazione non sono unici; possono esserci molteplici partenze per lo stesso paese, con l'unica restrizione di evitare partenze nello stesso giorno per lo stesso luogo. Gli utenti che partecipano a un viaggio hanno la possibilità, in una data successiva, di lasciare una recensione. La recensione non è visibile solo nella pagina del viaggio passato, ma anche nelle pagine di tutti i viaggi con la stessa destinazione.
 
 # PAGINE WEB
 * Home:
